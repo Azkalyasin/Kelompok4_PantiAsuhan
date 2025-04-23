@@ -1,0 +1,156 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace ucpPabd
+{
+    public partial class Ortu_Asuh: Form
+    {
+        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        public Ortu_Asuh()
+        {
+            InitializeComponent();
+            LoadData();
+            comboPekerjaan.Items.AddRange(new string[] { "PNS", "Jasa Profesional", "Wirausahawan", "TNI/Polri", "Pegawai Swasta" });
+            comboStatus.Items.AddRange(new string[] { "Menunggu", "Disetujui", "Ditolak" });
+
+            dataGridViewOrtu.CellClick += DataGridViewOrtu_CellClick;
+        }
+
+        private void Ortu_Asuh_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboPekerjaan.Items.Add("PNS");
+            comboPekerjaan.Items.Add("Jasa Profesional");
+            comboPekerjaan.Items.Add("Wirausahawan");
+            comboPekerjaan.Items.Add("TNI/Polri");
+            comboPekerjaan.Items.Add("Pegawai Swasta");
+
+
+        }
+
+        private void LoadData()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT * FROM Orang_Tua_Asuh";
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    dataGridViewOrtu.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memuat data: " + ex.Message);
+            }
+        }
+
+        private void ClearForm()
+        {
+            txtNamaOrtu.Clear();
+            txtTelepon.Clear();
+            txtAlamat.Clear();
+            comboPekerjaan.SelectedIndex = -1;
+            comboStatus.SelectedIndex = -1;
+        }
+
+        private void DataGridViewOrtu_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridViewOrtu.Rows[e.RowIndex];
+                txtNamaOrtu.Text = row.Cells["nama"].Value.ToString();
+                txtTelepon.Text = row.Cells["telepon"].Value.ToString();
+                txtAlamat.Text = row.Cells["alamat"].Value.ToString();
+                comboPekerjaan.Text = row.Cells["pekerjaan"].Value.ToString();
+                comboStatus.Text = row.Cells["status"].Value.ToString();
+            }
+        }
+
+        private void btnTambah_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO Orang_Tua_Asuh (nama, telepon, alamat, pekerjaan, status) VALUES (@nama, @telepon, @alamat, @pekerjaan, @status)";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Data berhasil ditambahkan");
+                ClearForm();
+                LoadData();
+            }
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewOrtu.CurrentRow != null)
+            {
+                int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "UPDATE Orang_Tua_Asuh SET nama=@nama, telepon=@telepon, alamat=@alamat, pekerjaan=@pekerjaan, status=@status WHERE orang_tua_id=@id";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                    cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                    cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                    cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                    cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data berhasil diperbarui");
+                    ClearForm();
+                    LoadData();
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewOrtu.CurrentRow != null)
+            {
+                int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
+                var confirm = MessageBox.Show("Yakin ingin menghapus data?", "Konfirmasi", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.Yes)
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        string query = "DELETE FROM Orang_Tua_Asuh WHERE orang_tua_id=@id";
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Data berhasil dihapus");
+                        ClearForm();
+                        LoadData();
+                    }
+                }
+            }
+        }
+    }
+}
+   
+
+
