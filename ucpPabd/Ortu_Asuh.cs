@@ -31,13 +31,6 @@ namespace ucpPabd
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            comboPekerjaan.Items.Add("PNS");
-            comboPekerjaan.Items.Add("Jasa Profesional");
-            comboPekerjaan.Items.Add("Wirausahawan");
-            comboPekerjaan.Items.Add("TNI/Polri");
-            comboPekerjaan.Items.Add("Pegawai Swasta");
-
-
         }
 
         private void LoadData()
