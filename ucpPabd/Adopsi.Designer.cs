@@ -37,8 +37,8 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnTambah = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtOrangtuaid = new System.Windows.Forms.TextBox();
-            this.txtAnakid = new System.Windows.Forms.TextBox();
+            this.txtNamaOrangtua = new System.Windows.Forms.TextBox();
+            this.txtNamaAnak = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -67,8 +67,8 @@
             this.groupBox1.Controls.Add(this.btnUpdate);
             this.groupBox1.Controls.Add(this.btnTambah);
             this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Controls.Add(this.txtOrangtuaid);
-            this.groupBox1.Controls.Add(this.txtAnakid);
+            this.groupBox1.Controls.Add(this.txtNamaOrangtua);
+            this.groupBox1.Controls.Add(this.txtNamaAnak);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label3);
@@ -143,21 +143,22 @@
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
             // 
-            // txtOrangtuaid
+            // txtNamaOrangtua
             // 
-            this.txtOrangtuaid.Location = new System.Drawing.Point(294, 70);
-            this.txtOrangtuaid.Multiline = true;
-            this.txtOrangtuaid.Name = "txtOrangtuaid";
-            this.txtOrangtuaid.Size = new System.Drawing.Size(180, 29);
-            this.txtOrangtuaid.TabIndex = 7;
+            this.txtNamaOrangtua.Location = new System.Drawing.Point(294, 70);
+            this.txtNamaOrangtua.Multiline = true;
+            this.txtNamaOrangtua.Name = "txtNamaOrangtua";
+            this.txtNamaOrangtua.Size = new System.Drawing.Size(180, 29);
+            this.txtNamaOrangtua.TabIndex = 7;
             // 
-            // txtAnakid
+            // txtNamaAnak
             // 
-            this.txtAnakid.Location = new System.Drawing.Point(294, 19);
-            this.txtAnakid.Multiline = true;
-            this.txtAnakid.Name = "txtAnakid";
-            this.txtAnakid.Size = new System.Drawing.Size(180, 29);
-            this.txtAnakid.TabIndex = 5;
+            this.txtNamaAnak.Location = new System.Drawing.Point(294, 19);
+            this.txtNamaAnak.Multiline = true;
+            this.txtNamaAnak.Name = "txtNamaAnak";
+            this.txtNamaAnak.Size = new System.Drawing.Size(180, 29);
+            this.txtNamaAnak.TabIndex = 5;
+            this.txtNamaAnak.TextChanged += new System.EventHandler(this.txtAnakid_TextChanged);
             // 
             // label6
             // 
@@ -173,9 +174,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(145, 83);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 16);
+            this.label5.Size = new System.Drawing.Size(105, 16);
             this.label5.TabIndex = 3;
-            this.label5.Text = "Orangtua_id";
+            this.label5.Text = "Nama Orang tua";
             // 
             // label3
             // 
@@ -191,9 +192,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(145, 22);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 16);
+            this.label2.Size = new System.Drawing.Size(78, 16);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Anak_id";
+            this.label2.Text = "Nama Anak";
             // 
             // Adopsi
             // 
@@ -221,8 +222,8 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnTambah;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox txtOrangtuaid;
-        private System.Windows.Forms.TextBox txtAnakid;
+        private System.Windows.Forms.TextBox txtNamaOrangtua;
+        private System.Windows.Forms.TextBox txtNamaAnak;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;

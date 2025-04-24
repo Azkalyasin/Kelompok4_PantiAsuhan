@@ -48,8 +48,8 @@ namespace ucpPabd
 
         private void ClearForm()
         {
-            txtAnakid.Clear();
-            txtOrangtuaid.Clear();
+            txtNamaAnak.Clear();
+            txtNamaOrangtua.Clear();
             dateTime.Value = DateTime.Now;
             comboStatus.SelectedIndex = -1;
         }
@@ -61,8 +61,20 @@ namespace ucpPabd
             {
                 DataGridViewRow row = dataGridViewAsuh.Rows[e.RowIndex];
 
-                txtAnakid.Text = row.Cells["anak_id"].Value.ToString();
-                txtOrangtuaid.Text = row.Cells["orang_tua_id"].Value.ToString();
+                int anakId = Convert.ToInt32(row.Cells["anak_id"].Value);
+                int ortuId = Convert.ToInt32(row.Cells["orang_tua_id"].Value);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmdAnak = new SqlCommand("SELECT nama FROM Anak_Asuh WHERE anak_id = @id", con);
+                    cmdAnak.Parameters.AddWithValue("@id", anakId);
+                    txtNamaAnak.Text = cmdAnak.ExecuteScalar()?.ToString();
+
+                    SqlCommand cmdOrtu = new SqlCommand("SELECT nama FROM Orang_Tua_Asuh WHERE orang_tua_id = @id", con);
+                    cmdOrtu.Parameters.AddWithValue("@id", ortuId);
+                    txtNamaOrangtua.Text = cmdOrtu.ExecuteScalar()?.ToString();
+                }
 
                 if (row.Cells["tanggal_adopsi"].Value != DBNull.Value)
                 {
@@ -78,15 +90,40 @@ namespace ucpPabd
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
+                con.Open();
+
+                // Cari anak_id berdasarkan nama anak
+                string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
+                SqlCommand cmdAnak = new SqlCommand(queryAnak, con);
+                cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
+                object resultAnak = cmdAnak.ExecuteScalar();
+
+                if (resultAnak == null)
+                {
+                    MessageBox.Show("Nama anak tidak ditemukan.");
+                    return;
+                }
+
+                // Cari orang_tua_id berdasarkan nama orang tua
+                string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
+                SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con);
+                cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
+                object resultOrtu = cmdOrtu.ExecuteScalar();
+
+                if (resultOrtu == null)
+                {
+                    MessageBox.Show("Nama orang tua tidak ditemukan.");
+                    return;
+                }
+
+                // Insert ke tabel Adopsi
                 string query = "INSERT INTO Adopsi (anak_id, orang_tua_id, tanggal_adopsi, status_adopsi) VALUES (@anak_id, @orang_tua_id, @tanggal_adopsi, @status_adopsi)";
                 SqlCommand cmd = new SqlCommand(query, con);
-
-                cmd.Parameters.AddWithValue("@anak_id", txtAnakid.Text);
-                cmd.Parameters.AddWithValue("@orang_tua_id", txtOrangtuaid.Text);
+                cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
+                cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
                 cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
                 cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
 
-                con.Open();
                 cmd.ExecuteNonQuery();
                 MessageBox.Show("Data berhasil ditambahkan");
                 ClearForm();
@@ -99,20 +136,45 @@ namespace ucpPabd
         {
             if (dataGridViewAsuh.CurrentRow != null)
             {
-                int id = Convert.ToInt32(dataGridViewAsuh.CurrentRow.Cells["adopsi_id"].Value);
+                int adopsiId = Convert.ToInt32(dataGridViewAsuh.CurrentRow.Cells["adopsi_id"].Value);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "UPDATE Adopsi SET anak_id=@anak_id, orang_tua_id=@orang_tua_id, tanggal_adopsi=@tanggal_adopsi, status_adopsi=@status_adopsi WHERE adopsi_id=@id";
+                    con.Open();
 
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@anak_id", txtAnakid.Text);
-                    cmd.Parameters.AddWithValue("@orang_tua_id", txtOrangtuaid.Text);
+                    // Ambil ID anak berdasarkan nama
+                    string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
+                    SqlCommand cmdAnak = new SqlCommand(queryAnak, con);
+                    cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
+                    object resultAnak = cmdAnak.ExecuteScalar();
+
+                    if (resultAnak == null)
+                    {
+                        MessageBox.Show("Nama anak tidak ditemukan.");
+                        return;
+                    }
+
+                    // Ambil ID orang tua berdasarkan nama
+                    string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
+                    SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con);
+                    cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
+                    object resultOrtu = cmdOrtu.ExecuteScalar();
+
+                    if (resultOrtu == null)
+                    {
+                        MessageBox.Show("Nama orang tua tidak ditemukan.");
+                        return;
+                    }
+
+                    // Update data
+                    string queryUpdate = "UPDATE Adopsi SET anak_id=@anak_id, orang_tua_id=@orang_tua_id, tanggal_adopsi=@tanggal_adopsi, status_adopsi=@status_adopsi WHERE adopsi_id=@id";
+                    SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                    cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
+                    cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
                     cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
                     cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@id", adopsiId);
 
-                    con.Open();
                     cmd.ExecuteNonQuery();
 
                     MessageBox.Show("Data berhasil diperbarui");
@@ -148,6 +210,10 @@ namespace ucpPabd
             }
         }
 
+        private void txtAnakid_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 
