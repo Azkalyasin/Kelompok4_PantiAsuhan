@@ -21,16 +21,59 @@ namespace ucpPabd
             LoadData();
             comboJenisKelamin.Items.AddRange(new string[] { "L", "P"});
             dataGridViewAnak.CellClick += DataGridViewAnak_CellClick;
+            comboStatusPendidkan.Items.AddRange(new string[] { "SD", "SMP", "SMA", "Kuliah" });
 
         }
 
         private void btnTambahData_Click(object sender, EventArgs e)
         {
             string nama = txtNama.Text;
-            string tempatTanggalLahir = txtTempatTglLahir.Text;
+            string tempat = txtTempat.Text;
             string tanggalMasuk = dateTime.Value.ToString("yyyy-MM-dd");
-            string statusPendidikan = txtStatusPendidikan.Text;
+            string tanggalLahir = dateTimeTanggalLahir.Value.ToString("yyyy-MM-dd");
+            string tempatTanggalLahir = $"{tempat}, {Convert.ToDateTime(tanggalLahir).ToString("dd MMMM yyyy")}";
             string jenisKelamin = comboJenisKelamin.Text;
+            string statusPendidkan = comboStatusPendidkan.Text;
+
+            // Validasi input
+            if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(tempat) ||
+                string.IsNullOrWhiteSpace(jenisKelamin) || string.IsNullOrWhiteSpace(statusPendidkan))
+            {
+                MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Validasi tanggal masuk
+            if (dateTime.Value.Date > DateTime.Today)
+            {
+                MessageBox.Show("Tanggal masuk tidak boleh di masa depan.", "Validasi Tanggal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(txtNama.Text, @"^[a-zA-Z\s]+$"))
+            {
+                MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            };
+
+
+            // Konfirmasi sebelum simpan
+            var konfirmasi = MessageBox.Show(
+                $"Apakah Anda yakin ingin menyimpan data berikut?\n\n" +
+                $"Nama: {nama}\n" +
+                $"Tempat & Tanggal Lahir: {tempatTanggalLahir}\n" +
+                $"Jenis Kelamin: {jenisKelamin}\n" +
+                $"Tanggal Masuk: {Convert.ToDateTime(tanggalMasuk).ToString("dd MMMM yyyy")}\n" +
+                $"Status Pendidikan: {statusPendidkan}",
+                "Konfirmasi Simpan",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (konfirmasi == DialogResult.No)
+            {
+                return;
+            }
 
             try
             {
@@ -39,14 +82,12 @@ namespace ucpPabd
                     string query = "INSERT INTO Anak_Asuh (Nama, Jenis_Kelamin, Tanggal_Masuk, Tempat_Tanggal_Lahir, Status_Pendidikan) " +
                                    "VALUES (@nama, @jenisKelamin, @tanggalMasuk, @tempatTanggalLahir, @statusPendidikan)";
 
-
-
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@nama", nama);
                     cmd.Parameters.AddWithValue("@jenisKelamin", jenisKelamin);
                     cmd.Parameters.AddWithValue("@tanggalMasuk", tanggalMasuk);
                     cmd.Parameters.AddWithValue("@tempatTanggalLahir", tempatTanggalLahir);
-                    cmd.Parameters.AddWithValue("@statusPendidikan", statusPendidikan);
+                    cmd.Parameters.AddWithValue("@statusPendidikan", statusPendidkan);
 
                     con.Open();
                     int result = cmd.ExecuteNonQuery();
@@ -74,9 +115,10 @@ namespace ucpPabd
         {
             txtNama.Clear();
             comboJenisKelamin.SelectedIndex = -1;
-            txtStatusPendidikan.Clear();
-            txtTempatTglLahir.Clear();
+            comboStatusPendidkan.SelectedIndex = -1;
+            txtTempat.Clear();
             dateTime.Value = DateTime.Now;
+            dateTimeTanggalLahir.Value = DateTime.Now;
         }
 
         private void LoadData()
@@ -112,9 +154,27 @@ namespace ucpPabd
                 DataGridViewRow row = dataGridViewAnak.Rows[e.RowIndex];
                 txtNama.Text = row.Cells["Nama"].Value.ToString();
                 comboJenisKelamin.Text = row.Cells["Jenis_Kelamin"].Value.ToString();
-                dateTime.Value = Convert.ToDateTime(row.Cells["Tanggal_Masuk"].Value);
-                txtTempatTglLahir.Text = row.Cells["Tempat_Tanggal_Lahir"].Value.ToString();
-                txtStatusPendidikan.Text = row.Cells["Status_Pendidikan"].Value.ToString();
+                comboStatusPendidkan.Text = row.Cells["Status_Pendidikan"].Value.ToString();
+                //dateTime.Value = Convert.ToDateTime(row.Cells["Tanggal_Masuk"].Value);
+                string tempatTanggalLahir = row.Cells["Tempat_Tanggal_Lahir"].Value.ToString();
+                string[] parts = tempatTanggalLahir.Split(new string[] { ", " }, StringSplitOptions.None);
+
+                if (parts.Length == 2)
+                {
+                    txtTempat.Text = parts[0];
+
+                    DateTime parsedTanggalLahir;
+                    if (DateTime.TryParse(parts[1], out parsedTanggalLahir))
+                    {
+                        dateTimeTanggalLahir.Value = parsedTanggalLahir;
+                    }
+                }
+                else
+                {
+                    // fallback kalau format tidak sesuai
+                    txtTempat.Text = tempatTanggalLahir;
+                    dateTimeTanggalLahir.Value = DateTime.Now;
+                }
             }
         }
 
@@ -125,9 +185,24 @@ namespace ucpPabd
                 int id = Convert.ToInt32(dataGridViewAnak.CurrentRow.Cells["anak_id"].Value);
                 string nama = txtNama.Text;
                 string jenisKelamin = comboJenisKelamin.Text;
+                string statusPendidikan = comboStatusPendidkan.Text;
                 string tanggalMasuk = dateTime.Value.ToString("yyyy-MM-dd");
-                string tempatTanggalLahir = txtTempatTglLahir.Text;
-                string statusPendidikan = txtStatusPendidikan.Text;
+                string tempat = txtTempat.Text;
+                DateTime tanggalLahir = dateTimeTanggalLahir.Value;
+
+                // Validasi tanggal lahir tidak boleh di masa depan
+                if (tanggalLahir > DateTime.Now)
+                {
+                    MessageBox.Show("Tanggal lahir tidak boleh di masa depan.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Gabungkan tempat dan tanggal lahir
+                string tempatTanggalLahir = $"{tempat}, {tanggalLahir.ToString("dd MMMM yyyy")}";
+
+                // Konfirmasi sebelum update
+                var confirm = MessageBox.Show("Apakah Anda yakin ingin mengupdate data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (confirm != DialogResult.Yes) return;
 
                 try
                 {
@@ -171,37 +246,40 @@ namespace ucpPabd
             {
                 int id = Convert.ToInt32(dataGridViewAnak.CurrentRow.Cells["anak_id"].Value);
 
-                var confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (confirm == DialogResult.Yes)
+                var confirm = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirm != DialogResult.Yes) return;
+
+                try
                 {
-                    try
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        using (SqlConnection con = new SqlConnection(connectionString))
+                        string query = "DELETE FROM Anak_Asuh WHERE anak_id = @id";
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        con.Open();
+                        int result = cmd.ExecuteNonQuery();
+
+                        if (result > 0)
                         {
-                            string query = "DELETE FROM Anak_Asuh WHERE anak_id = @id";
-                            SqlCommand cmd = new SqlCommand(query, con);
-                            cmd.Parameters.AddWithValue("@id", id);
-
-                            con.Open();
-                            int result = cmd.ExecuteNonQuery();
-
-                            if (result > 0)
-                            {
-                                MessageBox.Show("Data berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                ClearForm();
-                                LoadData();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Hapus gagal.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            }
+                            MessageBox.Show("Data berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            ClearForm();
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Gagal menghapus data. Mungkin data tidak ditemukan.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Terjadi kesalahan saat menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Silakan pilih baris data yang ingin dihapus terlebih dahulu.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -211,6 +289,11 @@ namespace ucpPabd
         }
 
         private void txtTempatTglLahir_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtNama_TextChanged(object sender, EventArgs e)
         {
 
         }

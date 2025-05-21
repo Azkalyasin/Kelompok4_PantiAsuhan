@@ -73,13 +73,43 @@ namespace ucpPabd
                 return;
             }
 
+            // Validasi jumlah harus lebih dari 0
+            if (jumlah <= 0)
+            {
+                MessageBox.Show("Jumlah pengeluaran harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             DateTime tanggal = dateTime.Value;
+
+            // Validasi tanggal tidak boleh di masa depan
+            if (tanggal.Date > DateTime.Today)
+            {
+                MessageBox.Show("Tanggal pengeluaran tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string kategori = comboPengeluaran.Text;
+
+            // Konfirmasi sebelum simpan
+            var konfirmasi = MessageBox.Show(
+                $"Apakah Anda yakin ingin menyimpan data pengeluaran berikut?\n\n" +
+                $"Kategori : {kategori}\n" +
+                $"Jumlah   : {jumlah:C}\n" +
+                $"Tanggal  : {tanggal:dd MMMM yyyy}",
+                "Konfirmasi Simpan Data",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (konfirmasi == DialogResult.No)
+            {
+                return;
+            }
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Pengeluaran (kategori, jumlah, tanggal) " +
-                               "VALUES (@kategori, @jumlah, @tanggal)";
+                string query = "INSERT INTO Pengeluaran (kategori, jumlah, tanggal) VALUES (@kategori, @jumlah, @tanggal)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@kategori", kategori);
                 cmd.Parameters.AddWithValue("@jumlah", jumlah);
@@ -89,7 +119,7 @@ namespace ucpPabd
                 {
                     con.Open();
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show("Data pemasukan berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Data pengeluaran berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     LoadData();
                 }
@@ -98,6 +128,7 @@ namespace ucpPabd
                     MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -113,8 +144,39 @@ namespace ucpPabd
                     return;
                 }
 
+                // Validasi jumlah harus lebih dari 0
+                if (jumlah <= 0)
+                {
+                    MessageBox.Show("Jumlah pengeluaran harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 DateTime tanggal = dateTime.Value;
+
+                // Validasi tanggal tidak boleh di masa depan
+                if (tanggal.Date > DateTime.Today)
+                {
+                    MessageBox.Show("Tanggal pengeluaran tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 string kategori = comboPengeluaran.Text;
+
+                // Konfirmasi sebelum update
+                var konfirmasi = MessageBox.Show(
+                    $"Apakah Anda yakin ingin memperbarui data pengeluaran berikut?\n\n" +
+                    $"Kategori : {kategori}\n" +
+                    $"Jumlah   : {jumlah:C}\n" +
+                    $"Tanggal  : {tanggal:dd MMMM yyyy}",
+                    "Konfirmasi Update Data",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (konfirmasi == DialogResult.No)
+                {
+                    return;
+                }
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -131,7 +193,7 @@ namespace ucpPabd
                         con.Open();
                         cmd.ExecuteNonQuery();
 
-                        MessageBox.Show("Data pemasukan berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Data pengeluaran berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         LoadData();
                     }
@@ -141,6 +203,7 @@ namespace ucpPabd
                     }
                 }
             }
+
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
@@ -174,6 +237,11 @@ namespace ucpPabd
                     }
                 }
             }
+        }
+
+        private void txtJumlah_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -76,21 +76,67 @@ namespace ucpPabd
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            
+            if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
+                string.IsNullOrWhiteSpace(txtTelepon.Text) ||
+                string.IsNullOrWhiteSpace(txtAlamat.Text) ||
+                string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
+                string.IsNullOrWhiteSpace(comboStatus.Text))
             {
-                string query = "INSERT INTO Orang_Tua_Asuh (nama, telepon, alamat, pekerjaan, status) VALUES (@nama, @telepon, @alamat, @pekerjaan, @status)";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+                MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                con.Open();
-                cmd.ExecuteNonQuery();
-                MessageBox.Show("Data berhasil ditambahkan");
-                ClearForm();
-                LoadData();
+            if (!System.Text.RegularExpressions.Regex.IsMatch(txtNamaOrtu.Text, @"^[a-zA-Z\s]+$"))
+            {
+                MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+
+
+            var konfirmasi = MessageBox.Show(
+                $"Apakah Anda yakin ingin menyimpan data berikut?\n\n" +
+                $"Nama: {txtNamaOrtu.Text}\n" +
+                $"Telepon: {txtTelepon.Text}\n" +
+                $"Alamat: {txtAlamat.Text}\n" +
+                $"Pekerjaan: {comboPekerjaan.Text}\n" +
+                $"Status: {comboStatus.Text}",
+                "Konfirmasi Simpan",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (konfirmasi == DialogResult.No)
+            {
+                return;
+            }
+
+            
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string query = "INSERT INTO Orang_Tua_Asuh (nama, telepon, alamat, pekerjaan, status) " +
+                                   "VALUES (@nama, @telepon, @alamat, @pekerjaan, @status)";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                    cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                    cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                    cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                    cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearForm();
+                    LoadData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -99,22 +145,63 @@ namespace ucpPabd
             if (dataGridViewOrtu.CurrentRow != null)
             {
                 int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    string query = "UPDATE Orang_Tua_Asuh SET nama=@nama, telepon=@telepon, alamat=@alamat, pekerjaan=@pekerjaan, status=@status WHERE orang_tua_id=@id";
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                    cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                    cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                    cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                    cmd.Parameters.AddWithValue("@status", comboStatus.Text);
-                    cmd.Parameters.AddWithValue("@id", id);
 
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Data berhasil diperbarui");
-                    ClearForm();
-                    LoadData();
+                // Validasi input
+                if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
+                    string.IsNullOrWhiteSpace(txtTelepon.Text) ||
+                    string.IsNullOrWhiteSpace(txtAlamat.Text) ||
+                    string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
+                    string.IsNullOrWhiteSpace(comboStatus.Text))
+                {
+                    MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Konfirmasi update
+                var konfirmasi = MessageBox.Show(
+                    $"Apakah Anda yakin ingin mengupdate data ini dengan informasi berikut?\n\n" +
+                    $"Nama: {txtNamaOrtu.Text}\n" +
+                    $"Telepon: {txtTelepon.Text}\n" +
+                    $"Alamat: {txtAlamat.Text}\n" +
+                    $"Pekerjaan: {comboPekerjaan.Text}\n" +
+                    $"Status: {comboStatus.Text}",
+                    "Konfirmasi Update",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (konfirmasi == DialogResult.No)
+                {
+                    return;
+                }
+
+                // Proses update
+                try
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        string query = "UPDATE Orang_Tua_Asuh SET nama=@nama, telepon=@telepon, alamat=@alamat, pekerjaan=@pekerjaan, status=@status " +
+                                       "WHERE orang_tua_id=@id";
+
+                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                        cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                        cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                        cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                        cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ClearForm();
+                        LoadData();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memperbarui data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

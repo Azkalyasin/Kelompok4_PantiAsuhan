@@ -75,8 +75,36 @@ namespace ucpPabd
                 return;
             }
 
+            // Validasi jumlah harus lebih dari 0
+            if (jumlah <= 0)
+            {
+                MessageBox.Show("Jumlah pemasukan harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             DateTime tanggal = dateTime.Value;
+
+            // Validasi tanggal tidak boleh di masa depan
+            if (tanggal > DateTime.Now)
+            {
+                MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string kategori = comboPemasukan.Text;
+
+            // Konfirmasi sebelum menyimpan data
+            var confirm = MessageBox.Show(
+                $"Apakah Anda yakin ingin menambahkan data pemasukan dengan keterangan :\n\nKategori: {kategori}\nJumlah: {jumlah}\nTanggal: {tanggal.ToShortDateString()}",
+                "Konfirmasi Tambah Data",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirm == DialogResult.No)
+            {
+                return;
+            }
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -109,6 +137,7 @@ namespace ucpPabd
             {
                 int id = Convert.ToInt32(dataGridViewPemasukan.CurrentRow.Cells["pemasukan_id"].Value);
 
+                // Validasi input kategori dan jumlah
                 if (string.IsNullOrWhiteSpace(comboPemasukan.Text) ||
                     !decimal.TryParse(txtJumlah.Text, out decimal jumlah))
                 {
@@ -116,7 +145,22 @@ namespace ucpPabd
                     return;
                 }
 
+                // Validasi jumlah harus lebih dari 0
+                if (jumlah <= 0)
+                {
+                    MessageBox.Show("Jumlah pemasukan harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 DateTime tanggal = dateTime.Value;
+
+                // Validasi tanggal tidak boleh di masa depan
+                if (tanggal > DateTime.Now)
+                {
+                    MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 string kategori = comboPemasukan.Text;
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -143,6 +187,10 @@ namespace ucpPabd
                         MessageBox.Show("Gagal memperbarui data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Pilih baris data yang ingin diperbarui.", "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

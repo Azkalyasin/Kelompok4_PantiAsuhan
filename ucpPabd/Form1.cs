@@ -13,48 +13,47 @@ namespace ucpPabd
         public Form1()
         {
             InitializeComponent();
+            txtPassword.PasswordChar = '*';
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            // Ambil nilai username dan password dari TextBox
             string username = txtUsername.Text;
             string password = txtPassword.Text;
 
             try
             {
-                // Gunakan parameterized query untuk mencegah SQL Injection
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT UserName, Password FROM Kepala_Panti WHERE UserName = @username AND Password = @password";
+                    // COLLATE SQL_Latin1_General_CP1_CS_AS agar perbandingan case-sensitive
+                    string query = @"SELECT UserName FROM Kepala_Panti 
+                             WHERE UserName COLLATE SQL_Latin1_General_CP1_CS_AS = @username 
+                             AND Password COLLATE SQL_Latin1_General_CP1_CS_AS = @password";
+
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@password", password);
 
-                    // Buka koneksi ke database
                     con.Open();
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    // Cek apakah data ditemukan
                     if (dt.Rows.Count > 0)
                     {
-                        // Jika login berhasil, buka form utama
                         Main mn = new Main();
                         mn.Show();
-                        this.Hide();  // Sembunyikan form login setelah login berhasil
+                        this.Hide();
                     }
                     else
                     {
-                        MessageBox.Show("Invalid username or password", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Username atau password salah", "Login Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Tangani kesalahan yang terjadi selama proses login
                 MessageBox.Show("Error: " + ex.Message, "Database Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

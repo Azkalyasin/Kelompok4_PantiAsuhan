@@ -30,6 +30,7 @@
         {
             this.dataGridViewPengeluaran = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.dateTime = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.comboPengeluaran = new System.Windows.Forms.ComboBox();
@@ -40,7 +41,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPengeluaran)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -77,6 +77,15 @@
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Pengeluaran";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::ucpPabd.Properties.Resources.download__3_;
+            this.pictureBox1.Location = new System.Drawing.Point(558, 47);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(222, 199);
+            this.pictureBox1.TabIndex = 18;
+            this.pictureBox1.TabStop = false;
             // 
             // dateTime
             // 
@@ -138,6 +147,7 @@
             this.txtJumlah.Name = "txtJumlah";
             this.txtJumlah.Size = new System.Drawing.Size(180, 29);
             this.txtJumlah.TabIndex = 7;
+            this.txtJumlah.TextChanged += new System.EventHandler(this.txtJumlah_TextChanged);
             // 
             // label6
             // 
@@ -165,15 +175,6 @@
             this.label2.Size = new System.Drawing.Size(132, 16);
             this.label2.TabIndex = 0;
             this.label2.Text = "kategoryPemasukan";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::ucpPabd.Properties.Resources.download__3_;
-            this.pictureBox1.Location = new System.Drawing.Point(558, 47);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(222, 199);
-            this.pictureBox1.TabIndex = 18;
-            this.pictureBox1.TabStop = false;
             // 
             // Pengeluaran
             // 
