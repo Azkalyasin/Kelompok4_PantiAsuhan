@@ -52,5 +52,13 @@ namespace ucpPabd
             Pengeluaran pg = new Pengeluaran();
             pg.Show();
         }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            Form1 loginForm = new Form1();
+            loginForm.Show();
+
+            this.Close();
+        }
     }
 }
