@@ -41,24 +41,41 @@ namespace ucpPabd
         
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Pemasukan pm = new Pemasukan();
-            pm.Show();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Pengeluaran pg = new Pengeluaran();
-            pg.Show();
-        }
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            Form1 loginForm = new Form1();
-            loginForm.Show();
+            DialogResult result = MessageBox.Show(
+    "Apakah Anda yakin ingin keluar?",
+    "Konfirmasi Logout",
+    MessageBoxButtons.YesNo,
+    MessageBoxIcon.Question);
 
-            this.Close();
+            if (result == DialogResult.Yes)
+            {
+                Form1 loginForm = new Form1();
+                loginForm.Show();
+                this.Close();
+            }
+        }
+
+
+
+        private void btnPemasukan_Click(object sender, EventArgs e)
+        {
+            Pemasukan pe = new Pemasukan();
+            pe.Show();
+        }
+
+        private void btnPengeluaran_Click(object sender, EventArgs e)
+        {
+            Pengeluaran pl = new Pengeluaran();
+            pl.Show();
+        }
+
+        private void btnSaldo_Click(object sender, EventArgs e)
+        {
+            Saldo s = new Saldo();
+            s.Show();
         }
     }
 }

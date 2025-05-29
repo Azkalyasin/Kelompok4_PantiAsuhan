@@ -79,15 +79,14 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "INSERT INTO Anak_Asuh (Nama, Jenis_Kelamin, Tanggal_Masuk, Tempat_Tanggal_Lahir, Status_Pendidikan) " +
-                                   "VALUES (@nama, @jenisKelamin, @tanggalMasuk, @tempatTanggalLahir, @statusPendidikan)";
+                    SqlCommand cmd = new SqlCommand("sp_TambahAnakAsuh", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@nama", nama);
-                    cmd.Parameters.AddWithValue("@jenisKelamin", jenisKelamin);
-                    cmd.Parameters.AddWithValue("@tanggalMasuk", tanggalMasuk);
-                    cmd.Parameters.AddWithValue("@tempatTanggalLahir", tempatTanggalLahir);
-                    cmd.Parameters.AddWithValue("@statusPendidikan", statusPendidkan);
+                    cmd.Parameters.AddWithValue("@ttl", tempatTanggalLahir);
+                    cmd.Parameters.AddWithValue("@jk", jenisKelamin);
+                    cmd.Parameters.AddWithValue("@tanggal_masuk", tanggalMasuk);
+                    cmd.Parameters.AddWithValue("@status_pendidikan", statusPendidkan);
 
                     con.Open();
                     int result = cmd.ExecuteNonQuery();
@@ -108,6 +107,7 @@ namespace ucpPabd
             {
                 MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
 
 
@@ -127,11 +127,16 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT * FROM Anak_Asuh";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dataGridViewAnak.DataSource = dt;
+                    using (SqlCommand cmd = new SqlCommand("sp_GetAllAnakAsuh", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        dataGridViewAnak.DataSource = dt;
+                    }
                 }
             }
             catch (Exception ex)
@@ -190,17 +195,14 @@ namespace ucpPabd
                 string tempat = txtTempat.Text;
                 DateTime tanggalLahir = dateTimeTanggalLahir.Value;
 
-                // Validasi tanggal lahir tidak boleh di masa depan
                 if (tanggalLahir > DateTime.Now)
                 {
                     MessageBox.Show("Tanggal lahir tidak boleh di masa depan.", "Validasi Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Gabungkan tempat dan tanggal lahir
                 string tempatTanggalLahir = $"{tempat}, {tanggalLahir.ToString("dd MMMM yyyy")}";
 
-                // Konfirmasi sebelum update
                 var confirm = MessageBox.Show("Apakah Anda yakin ingin mengupdate data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (confirm != DialogResult.Yes) return;
 
@@ -208,15 +210,15 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string query = "UPDATE Anak_Asuh SET Nama = @nama, Jenis_Kelamin = @jenisKelamin, Tanggal_Masuk = @tanggalMasuk, Tempat_Tanggal_Lahir = @tempatTanggalLahir, Status_Pendidikan = @statusPendidikan WHERE anak_id = @id";
+                        SqlCommand cmd = new SqlCommand("sp_UpdateAnakAsuh", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                        SqlCommand cmd = new SqlCommand(query, con);
+                        cmd.Parameters.AddWithValue("@anak_id", id);
                         cmd.Parameters.AddWithValue("@nama", nama);
-                        cmd.Parameters.AddWithValue("@jenisKelamin", jenisKelamin);
-                        cmd.Parameters.AddWithValue("@tanggalMasuk", tanggalMasuk);
-                        cmd.Parameters.AddWithValue("@tempatTanggalLahir", tempatTanggalLahir);
-                        cmd.Parameters.AddWithValue("@statusPendidikan", statusPendidikan);
-                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@jk", jenisKelamin);
+                        cmd.Parameters.AddWithValue("@tanggal_masuk", tanggalMasuk);
+                        cmd.Parameters.AddWithValue("@ttl", tempatTanggalLahir);
+                        cmd.Parameters.AddWithValue("@status_pendidikan", statusPendidikan);
 
                         con.Open();
                         int result = cmd.ExecuteNonQuery();
@@ -253,9 +255,10 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string query = "DELETE FROM Anak_Asuh WHERE anak_id = @id";
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlCommand cmd = new SqlCommand("sp_DeleteAnakAsuh", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@anak_id", id);
 
                         con.Open();
                         int result = cmd.ExecuteNonQuery();
