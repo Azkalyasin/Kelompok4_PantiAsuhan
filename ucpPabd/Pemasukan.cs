@@ -28,10 +28,13 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT * FROM Pemasukan";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    SqlCommand cmd = new SqlCommand("sp_ReadPemasukan", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+
                     dataGridViewPemasukan.DataSource = dt;
                 }
             }
@@ -67,7 +70,6 @@ namespace ucpPabd
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            // Validasi input kategori dan jumlah
             if (string.IsNullOrWhiteSpace(comboPemasukan.Text) ||
                 !decimal.TryParse(txtJumlah.Text, out decimal jumlah))
             {
@@ -75,7 +77,6 @@ namespace ucpPabd
                 return;
             }
 
-            // Validasi jumlah harus lebih dari 0
             if (jumlah <= 0)
             {
                 MessageBox.Show("Jumlah pemasukan harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -84,7 +85,6 @@ namespace ucpPabd
 
             DateTime tanggal = dateTime.Value;
 
-            // Validasi tanggal tidak boleh di masa depan
             if (tanggal > DateTime.Now)
             {
                 MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -93,7 +93,6 @@ namespace ucpPabd
 
             string kategori = comboPemasukan.Text;
 
-            // Konfirmasi sebelum menyimpan data
             var confirm = MessageBox.Show(
                 $"Apakah Anda yakin ingin menambahkan data pemasukan dengan keterangan :\n\nKategori: {kategori}\nJumlah: {jumlah}\nTanggal: {tanggal.ToShortDateString()}",
                 "Konfirmasi Tambah Data",
@@ -108,9 +107,9 @@ namespace ucpPabd
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Pemasukan (kategori, jumlah, tanggal) " +
-                               "VALUES (@kategori, @jumlah, @tanggal)";
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("sp_TambahPemasukan", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
                 cmd.Parameters.AddWithValue("@kategori", kategori);
                 cmd.Parameters.AddWithValue("@jumlah", jumlah);
                 cmd.Parameters.AddWithValue("@tanggal", tanggal);
@@ -137,7 +136,6 @@ namespace ucpPabd
             {
                 int id = Convert.ToInt32(dataGridViewPemasukan.CurrentRow.Cells["pemasukan_id"].Value);
 
-                // Validasi input kategori dan jumlah
                 if (string.IsNullOrWhiteSpace(comboPemasukan.Text) ||
                     !decimal.TryParse(txtJumlah.Text, out decimal jumlah))
                 {
@@ -145,7 +143,6 @@ namespace ucpPabd
                     return;
                 }
 
-                // Validasi jumlah harus lebih dari 0
                 if (jumlah <= 0)
                 {
                     MessageBox.Show("Jumlah pemasukan harus lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -154,7 +151,6 @@ namespace ucpPabd
 
                 DateTime tanggal = dateTime.Value;
 
-                // Validasi tanggal tidak boleh di masa depan
                 if (tanggal > DateTime.Now)
                 {
                     MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -165,19 +161,18 @@ namespace ucpPabd
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "UPDATE Pemasukan SET kategori=@kategori, jumlah=@jumlah, tanggal=@tanggal WHERE pemasukan_id=@id";
+                    SqlCommand cmd = new SqlCommand("sp_UpdatePemasukan", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@pemasukan_id", id);
                     cmd.Parameters.AddWithValue("@kategori", kategori);
                     cmd.Parameters.AddWithValue("@jumlah", jumlah);
                     cmd.Parameters.AddWithValue("@tanggal", tanggal);
-                    cmd.Parameters.AddWithValue("@id", id);
 
                     try
                     {
                         con.Open();
                         cmd.ExecuteNonQuery();
-
                         MessageBox.Show("Data pemasukan berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         LoadData();
@@ -206,9 +201,10 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string query = "DELETE FROM Pemasukan WHERE pemasukan_id = @id";
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlCommand cmd = new SqlCommand("sp_DeletePemasukan", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@pemasukan_id", id);
 
                         try
                         {
@@ -225,6 +221,7 @@ namespace ucpPabd
                     }
                 }
             }
+     
         }
 
     }
