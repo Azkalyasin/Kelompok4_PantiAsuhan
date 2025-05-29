@@ -49,5 +49,10 @@ namespace ucpPabd
                 MessageBox.Show("Error load data saldo: " + ex.Message);
             }
         }
+
+        private void dataGridViewSaldo_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

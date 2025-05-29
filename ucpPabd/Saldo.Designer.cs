@@ -41,6 +41,7 @@
             this.dataGridViewSaldo.RowTemplate.Height = 24;
             this.dataGridViewSaldo.Size = new System.Drawing.Size(733, 334);
             this.dataGridViewSaldo.TabIndex = 0;
+            this.dataGridViewSaldo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewSaldo_CellContentClick);
             // 
             // Saldo
             // 

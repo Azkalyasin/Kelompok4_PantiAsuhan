@@ -33,8 +33,10 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT * FROM Adopsi";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    SqlCommand cmd = new SqlCommand("sp_ReadAdopsi", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dataGridViewAsuh.DataSource = dt;
@@ -61,27 +63,44 @@ namespace ucpPabd
             {
                 DataGridViewRow row = dataGridViewAsuh.Rows[e.RowIndex];
 
-                int anakId = Convert.ToInt32(row.Cells["anak_id"].Value);
-                int ortuId = Convert.ToInt32(row.Cells["orang_tua_id"].Value);
+                object anakIdValue = row.Cells["anak_id"].Value;
+                object ortuIdValue = row.Cells["orang_tua_id"].Value;
+
+                if (anakIdValue == DBNull.Value || ortuIdValue == DBNull.Value)
+                {
+                    MessageBox.Show("Data anak atau orang tua tidak tersedia.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int anakId = Convert.ToInt32(anakIdValue);
+                int ortuId = Convert.ToInt32(ortuIdValue);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
                     SqlCommand cmdAnak = new SqlCommand("SELECT nama FROM Anak_Asuh WHERE anak_id = @id", con);
                     cmdAnak.Parameters.AddWithValue("@id", anakId);
-                    txtNamaAnak.Text = cmdAnak.ExecuteScalar()?.ToString();
+                    object namaAnakObj = cmdAnak.ExecuteScalar();
+                    txtNamaAnak.Text = namaAnakObj != null ? namaAnakObj.ToString() : "";
 
                     SqlCommand cmdOrtu = new SqlCommand("SELECT nama FROM Orang_Tua_Asuh WHERE orang_tua_id = @id", con);
                     cmdOrtu.Parameters.AddWithValue("@id", ortuId);
-                    txtNamaOrangtua.Text = cmdOrtu.ExecuteScalar()?.ToString();
+                    object namaOrtuObj = cmdOrtu.ExecuteScalar();
+                    txtNamaOrangtua.Text = namaOrtuObj != null ? namaOrtuObj.ToString() : "";
                 }
 
                 if (row.Cells["tanggal_adopsi"].Value != DBNull.Value)
                 {
                     dateTime.Value = Convert.ToDateTime(row.Cells["tanggal_adopsi"].Value);
                 }
+                else
+                {
+                    dateTime.Value = DateTime.Today;  // Atau default lain sesuai kebutuhan
+                }
 
-                comboStatus.Text = row.Cells["status_adopsi"].Value.ToString();
+                comboStatus.Text = row.Cells["status_adopsi"].Value != DBNull.Value
+                    ? row.Cells["status_adopsi"].Value.ToString()
+                    : "";
             }
         }
 
@@ -163,10 +182,8 @@ namespace ucpPabd
                     return;
                 }
 
-                // Insert ke tabel Adopsi
-                string query = "INSERT INTO Adopsi (anak_id, orang_tua_id, tanggal_adopsi, status_adopsi) " +
-                               "VALUES (@anak_id, @orang_tua_id, @tanggal_adopsi, @status_adopsi)";
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("sp_TambahAdopsi", con);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
                 cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
                 cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
@@ -254,14 +271,14 @@ namespace ucpPabd
                         return;
                     }
 
-                    // Lakukan update
-                    string queryUpdate = "UPDATE Adopsi SET anak_id=@anak_id, orang_tua_id=@orang_tua_id, tanggal_adopsi=@tanggal_adopsi, status_adopsi=@status_adopsi WHERE adopsi_id=@id";
-                    SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                    SqlCommand cmd = new SqlCommand("sp_UpdateAdopsi", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@adopsi_id", adopsiId);
                     cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
                     cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
                     cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
                     cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
-                    cmd.Parameters.AddWithValue("@id", adopsiId);
+
 
                     try
                     {
@@ -291,9 +308,10 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string query = "DELETE FROM Adopsi WHERE adopsi_id = @id";
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlCommand cmd = new SqlCommand("sp_DeleteAdopsi", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@adopsi_id", id);
+
 
                         con.Open();
                         cmd.ExecuteNonQuery();
