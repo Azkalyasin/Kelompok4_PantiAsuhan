@@ -39,11 +39,16 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT * FROM Orang_Tua_Asuh";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dataGridViewOrtu.DataSource = dt;
+                    using (SqlCommand cmd = new SqlCommand("sp_GetAllOrangTua", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        dataGridViewOrtu.DataSource = dt;
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,12 +81,11 @@ namespace ucpPabd
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            
             if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
-                string.IsNullOrWhiteSpace(txtTelepon.Text) ||
-                string.IsNullOrWhiteSpace(txtAlamat.Text) ||
-                string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
-                string.IsNullOrWhiteSpace(comboStatus.Text))
+    string.IsNullOrWhiteSpace(txtTelepon.Text) ||
+    string.IsNullOrWhiteSpace(txtAlamat.Text) ||
+    string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
+    string.IsNullOrWhiteSpace(comboStatus.Text))
             {
                 MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -92,9 +96,6 @@ namespace ucpPabd
                 MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-
-
 
             var konfirmasi = MessageBox.Show(
                 $"Apakah Anda yakin ingin menyimpan data berikut?\n\n" +
@@ -113,25 +114,28 @@ namespace ucpPabd
                 return;
             }
 
-            
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "INSERT INTO Orang_Tua_Asuh (nama, telepon, alamat, pekerjaan, status) " +
-                                   "VALUES (@nama, @telepon, @alamat, @pekerjaan, @status)";
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                    cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                    cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                    cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                    cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+                    using (SqlCommand cmd = new SqlCommand("sp_TambahOrtu", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ClearForm();
-                    LoadData();
+                        // Parameter sesuai stored procedure
+                        cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                        cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                        cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                        cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                        cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ClearForm();
+                        LoadData(); // pastikan LoadData() sudah pakai procedure atau query yang tepat
+                    }
                 }
             }
             catch (Exception ex)
@@ -146,7 +150,6 @@ namespace ucpPabd
             {
                 int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
 
-                // Validasi input
                 if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
                     string.IsNullOrWhiteSpace(txtTelepon.Text) ||
                     string.IsNullOrWhiteSpace(txtAlamat.Text) ||
@@ -157,7 +160,6 @@ namespace ucpPabd
                     return;
                 }
 
-                // Konfirmasi update
                 var konfirmasi = MessageBox.Show(
                     $"Apakah Anda yakin ingin mengupdate data ini dengan informasi berikut?\n\n" +
                     $"Nama: {txtNamaOrtu.Text}\n" +
@@ -175,28 +177,29 @@ namespace ucpPabd
                     return;
                 }
 
-                // Proses update
                 try
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string query = "UPDATE Orang_Tua_Asuh SET nama=@nama, telepon=@telepon, alamat=@alamat, pekerjaan=@pekerjaan, status=@status " +
-                                       "WHERE orang_tua_id=@id";
+                        using (SqlCommand cmd = new SqlCommand("sp_UpdateOrtu", con))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
 
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                        cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                        cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                        cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                        cmd.Parameters.AddWithValue("@status", comboStatus.Text);
-                        cmd.Parameters.AddWithValue("@id", id);
+                            // Parameter sesuai stored procedure
+                            cmd.Parameters.AddWithValue("@orang_tua_id", id);
+                            cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
+                            cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
+                            cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
+                            cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
+                            cmd.Parameters.AddWithValue("@status", comboStatus.Text);
 
-                        con.Open();
-                        cmd.ExecuteNonQuery();
+                            con.Open();
+                            cmd.ExecuteNonQuery();
 
-                        MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearForm();
-                        LoadData();
+                            MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            ClearForm();
+                            LoadData();
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -214,17 +217,29 @@ namespace ucpPabd
                 var confirm = MessageBox.Show("Yakin ingin menghapus data?", "Konfirmasi", MessageBoxButtons.YesNo);
                 if (confirm == DialogResult.Yes)
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    try
                     {
-                        string query = "DELETE FROM Orang_Tua_Asuh WHERE orang_tua_id=@id";
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.Parameters.AddWithValue("@id", id);
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            using (SqlCommand cmd = new SqlCommand("sp_DeleteOrtu", con))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
 
-                        con.Open();
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Data berhasil dihapus");
-                        ClearForm();
-                        LoadData();
+                                // Parameter id untuk delete
+                                cmd.Parameters.AddWithValue("@orang_tua_id", id);
+
+                                con.Open();
+                                cmd.ExecuteNonQuery();
+
+                                MessageBox.Show("Data berhasil dihapus");
+                                ClearForm();
+                                LoadData();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Gagal menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
