@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace ucpPabd
         public Saldo()
         {
             InitializeComponent();
+            this.Load += Saldo_Load;
         }
 
         private void Saldo_Load(object sender, EventArgs e)
@@ -30,26 +32,53 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT saldo_id, total_saldo, tanggal_update FROM Saldo ORDER BY tanggal_update DESC";
+                    string query = @"
+                        SELECT saldo_id, total_saldo, tanggal_update 
+                        FROM Saldo 
+                        ORDER BY tanggal_update DESC";
+
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
                     dataGridViewSaldo.DataSource = dt;
 
-                    // Opsional: Format tampilan DataGridView
-                    dataGridViewSaldo.Columns["saldo_id"].HeaderText = "ID Saldo";
-                    dataGridViewSaldo.Columns["total_saldo"].HeaderText = "Total Saldo";
-                    dataGridViewSaldo.Columns["tanggal_update"].HeaderText = "Tanggal Update";
-                    dataGridViewSaldo.AutoResizeColumns();
+                    FormatDataGridView();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error load data saldo: " + ex.Message);
+                MessageBox.Show($"Gagal memuat data saldo:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void FormatDataGridView()
+        {
+            if (dataGridViewSaldo.Columns.Contains("saldo_id"))
+                dataGridViewSaldo.Columns["saldo_id"].HeaderText = "ID Saldo";
+
+            if (dataGridViewSaldo.Columns.Contains("total_saldo"))
+            {
+                dataGridViewSaldo.Columns["total_saldo"].HeaderText = "Total Saldo";
+                dataGridViewSaldo.Columns["total_saldo"].DefaultCellStyle.Format = "C0";
+                dataGridViewSaldo.Columns["total_saldo"].DefaultCellStyle.FormatProvider = new CultureInfo("id-ID");
+                dataGridViewSaldo.Columns["total_saldo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+
+            if (dataGridViewSaldo.Columns.Contains("tanggal_update"))
+            {
+                dataGridViewSaldo.Columns["tanggal_update"].HeaderText = "Tanggal Update";
+
+                // Format: 29/05/2025 14:35
+                dataGridViewSaldo.Columns["tanggal_update"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                dataGridViewSaldo.Columns["tanggal_update"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+
+            dataGridViewSaldo.AutoResizeColumns();
+            dataGridViewSaldo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewSaldo.MultiSelect = false;
+            dataGridViewSaldo.ReadOnly = true;
+        }
         private void dataGridViewSaldo_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
