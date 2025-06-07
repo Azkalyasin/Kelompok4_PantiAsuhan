@@ -135,22 +135,25 @@ namespace ucpPabd
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("sp_TambahPengeluaran", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@kategori", kategori);
-                cmd.Parameters.AddWithValue("@jumlah", jumlah);
-                cmd.Parameters.AddWithValue("@tanggal", tanggal);
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
 
                 try
                 {
-                    con.Open();
+                    SqlCommand cmd = new SqlCommand("sp_TambahPengeluaran", con, transaction);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@kategori", kategori);
+                    cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                    cmd.Parameters.AddWithValue("@tanggal", tanggal);
                     cmd.ExecuteNonQuery();
+                    transaction.Commit();
                     MessageBox.Show("Data pengeluaran berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     LoadData();
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     MessageBox.Show("Gagal menambahkan data: " + ex.Message);
                 }
             }
@@ -194,23 +197,27 @@ namespace ucpPabd
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("sp_UpdatePengeluaran", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@pengeluaran_id", id);
-                    cmd.Parameters.AddWithValue("@kategori", kategori);
-                    cmd.Parameters.AddWithValue("@jumlah", jumlah);
-                    cmd.Parameters.AddWithValue("@tanggal", tanggal);
+
+                    con.Open();
+                    SqlTransaction transaction = con.BeginTransaction();
 
                     try
                     {
-                        con.Open();
+                        SqlCommand cmd = new SqlCommand("sp_UpdatePengeluaran", con, transaction);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@pengeluaran_id", id);
+                        cmd.Parameters.AddWithValue("@kategori", kategori);
+                        cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                        cmd.Parameters.AddWithValue("@tanggal", tanggal);
                         cmd.ExecuteNonQuery();
+                        transaction.Commit();
                         MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         LoadData();
                     }
                     catch (Exception ex)
                     {
+                        transaction.Rollback();
                         MessageBox.Show("Gagal update: " + ex.Message);
                     }
                 }
@@ -229,20 +236,24 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        SqlCommand cmd = new SqlCommand("sp_DeletePengeluaran", con);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@pengeluaran_id", id);
+                        con.Open();
+                        SqlTransaction transaction = con.BeginTransaction();
+
 
                         try
                         {
-                            con.Open();
+                            SqlCommand cmd = new SqlCommand("sp_DeletePengeluaran", con, transaction);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@pengeluaran_id", id);
                             cmd.ExecuteNonQuery();
+                            transaction.Commit();
                             MessageBox.Show("Data berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
                             LoadData();
                         }
                         catch (Exception ex)
                         {
+                            transaction.Rollback();
                             MessageBox.Show("Gagal hapus: " + ex.Message);
                         }
                     }
