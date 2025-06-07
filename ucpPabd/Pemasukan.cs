@@ -107,23 +107,26 @@ namespace ucpPabd
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("sp_TambahPemasukan", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
 
-                cmd.Parameters.AddWithValue("@kategori", kategori);
-                cmd.Parameters.AddWithValue("@jumlah", jumlah);
-                cmd.Parameters.AddWithValue("@tanggal", tanggal);
 
                 try
                 {
-                    con.Open();
+                    SqlCommand cmd = new SqlCommand("sp_TambahPemasukan", con, transaction);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@kategori", kategori);
+                    cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                    cmd.Parameters.AddWithValue("@tanggal", tanggal);
                     cmd.ExecuteNonQuery();
+                    transaction.Commit();
                     MessageBox.Show("Data pemasukan berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     LoadData();
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -161,24 +164,27 @@ namespace ucpPabd
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("sp_UpdatePemasukan", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@pemasukan_id", id);
-                    cmd.Parameters.AddWithValue("@kategori", kategori);
-                    cmd.Parameters.AddWithValue("@jumlah", jumlah);
-                    cmd.Parameters.AddWithValue("@tanggal", tanggal);
+                    con.Open();
+                    SqlTransaction transaction = con.BeginTransaction();
 
                     try
                     {
-                        con.Open();
+                        
+                        SqlCommand cmd = new SqlCommand("sp_UpdatePemasukan", con, transaction);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@pemasukan_id", id);
+                        cmd.Parameters.AddWithValue("@kategori", kategori);
+                        cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                        cmd.Parameters.AddWithValue("@tanggal", tanggal);
                         cmd.ExecuteNonQuery();
+                        transaction.Commit();
                         MessageBox.Show("Data pemasukan berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         LoadData();
                     }
                     catch (Exception ex)
                     {
+                        transaction.Rollback();
                         MessageBox.Show("Gagal memperbarui data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -201,21 +207,23 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        SqlCommand cmd = new SqlCommand("sp_DeletePemasukan", con);
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        cmd.Parameters.AddWithValue("@pemasukan_id", id);
+                        con.Open();
+                        SqlTransaction transaction = con.BeginTransaction();
 
                         try
                         {
-                            con.Open();
+                            SqlCommand cmd = new SqlCommand("sp_DeletePemasukan", con, transaction);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@pemasukan_id", id);
                             cmd.ExecuteNonQuery();
+                            transaction.Commit();
                             MessageBox.Show("Data pemasukan berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
                             LoadData();
                         }
                         catch (Exception ex)
                         {
+                            transaction.Rollback();
                             MessageBox.Show("Gagal menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
