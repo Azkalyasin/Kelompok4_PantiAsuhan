@@ -8,16 +8,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
+
 
 namespace ucpPabd
 {
     public partial class Anak_Asuh: Form
     {
+
+        private readonly MemoryCache _cache = MemoryCache.Default;
+        private readonly string _cacheKey = "AnakAsuhData";
+        private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
 
         public Anak_Asuh()
         {
             InitializeComponent();
+            EnsureIndexes();
             LoadData();
             comboJenisKelamin.Items.AddRange(new string[] { "L", "P"});
             dataGridViewAnak.CellClick += DataGridViewAnak_CellClick;
@@ -79,27 +89,40 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("sp_TambahAnakAsuh", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@nama", nama);
-                    cmd.Parameters.AddWithValue("@ttl", tempatTanggalLahir);
-                    cmd.Parameters.AddWithValue("@jk", jenisKelamin);
-                    cmd.Parameters.AddWithValue("@tanggal_masuk", tanggalMasuk);
-                    cmd.Parameters.AddWithValue("@status_pendidikan", statusPendidkan);
-
                     con.Open();
-                    int result = cmd.ExecuteNonQuery();
+                    SqlTransaction transaction = con.BeginTransaction();
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand("sp_TambahAnakAsuh", con, transaction);
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    if (result > 0)
-                    {
-                        MessageBox.Show("Data berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearForm();
-                        LoadData();
+                        cmd.Parameters.AddWithValue("@nama", nama);
+                        cmd.Parameters.AddWithValue("@ttl", tempatTanggalLahir);
+                        cmd.Parameters.AddWithValue("@jk", jenisKelamin);
+                        cmd.Parameters.AddWithValue("@tanggal_masuk", tanggalMasuk);
+                        cmd.Parameters.AddWithValue("@status_pendidikan", statusPendidkan);
+
+                        
+                        int result = cmd.ExecuteNonQuery();
+                        transaction.Commit();
+
+
+                        if (result > 0)
+                        {
+                            _cache.Remove(_cacheKey);
+                            MessageBox.Show("Data berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            ClearForm();
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Data gagal ditambahkan.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
-                    else
+                    catch
                     {
-                        MessageBox.Show("Data gagal ditambahkan.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        transaction.Rollback();
+                        MessageBox.Show("Terjadi kesalahan saat menyimpan data. Silakan coba lagi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -125,6 +148,14 @@ namespace ucpPabd
         {
             try
             {
+                DataTable cachedData = _cache.Get(_cacheKey) as DataTable;
+
+                if (cachedData != null)
+                {
+                    dataGridViewAnak.DataSource = cachedData;
+                    return;
+                }
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("sp_GetAllAnakAsuh", con))
@@ -134,6 +165,9 @@ namespace ucpPabd
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
+
+                        // Simpan ke cache
+                        _cache.Set(_cacheKey, dt, _cachePolicy);
 
                         dataGridViewAnak.DataSource = dt;
                     }
@@ -206,11 +240,13 @@ namespace ucpPabd
                 var confirm = MessageBox.Show("Apakah Anda yakin ingin mengupdate data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (confirm != DialogResult.Yes) return;
 
-                try
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    con.Open();
+                    SqlTransaction transaction = con.BeginTransaction();
+                    try
                     {
-                        SqlCommand cmd = new SqlCommand("sp_UpdateAnakAsuh", con);
+                        SqlCommand cmd = new SqlCommand("sp_UpdateAnakAsuh", con, transaction);
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@anak_id", id);
@@ -220,11 +256,13 @@ namespace ucpPabd
                         cmd.Parameters.AddWithValue("@ttl", tempatTanggalLahir);
                         cmd.Parameters.AddWithValue("@status_pendidikan", statusPendidikan);
 
-                        con.Open();
+
                         int result = cmd.ExecuteNonQuery();
+                        transaction.Commit();
 
                         if (result > 0)
                         {
+                            _cache.Remove(_cacheKey);
                             MessageBox.Show("Data berhasil diperbarui.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
                             LoadData();
@@ -234,11 +272,13 @@ namespace ucpPabd
                             MessageBox.Show("Update gagal.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
+                    catch
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("Terjadi kesalahan saat menyimpan data. Silakan coba lagi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+ 
             }
         }
 
@@ -251,34 +291,37 @@ namespace ucpPabd
                 var confirm = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirm != DialogResult.Yes) return;
 
-                try
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    con.Open();
+                    SqlTransaction transaction = con.BeginTransaction();
+                    try
                     {
-                        SqlCommand cmd = new SqlCommand("sp_DeleteAnakAsuh", con);
+                        SqlCommand cmd = new SqlCommand("sp_DeleteAnakAsuh", con, transaction);
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@anak_id", id);
-
-                        con.Open();
                         int result = cmd.ExecuteNonQuery();
-
+                        transaction.Commit();
                         if (result > 0)
                         {
+                            _cache.Remove(_cacheKey);
+
                             MessageBox.Show("Data berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
                             LoadData();
                         }
                         else
                         {
-                            MessageBox.Show("Gagal menghapus data. Mungkin data tidak ditemukan.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show("Hapus gagal.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
+                    catch
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("Terjadi kesalahan saat menghapus data. Silakan coba lagi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Terjadi kesalahan saat menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                
             }
             else
             {
@@ -300,5 +343,35 @@ namespace ucpPabd
         {
 
         }
+
+        private void EnsureIndexes()
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string indexScript = @"
+            IF OBJECT_ID('dbo.Anak_Asuh', 'U') IS NOT NULL
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_AnakAsuh_Nama' AND object_id = OBJECT_ID('dbo.Anak_Asuh'))
+                    CREATE NONCLUSTERED INDEX idx_AnakAsuh_Nama ON dbo.Anak_Asuh(nama);
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_AnakAsuh_JenisKelamin' AND object_id = OBJECT_ID('dbo.Anak_Asuh'))
+                    CREATE NONCLUSTERED INDEX idx_AnakAsuh_JenisKelamin ON dbo.Anak_Asuh(jenis_kelamin);
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_AnakAsuh_TanggalMasuk' AND object_id = OBJECT_ID('dbo.Anak_Asuh'))
+                    CREATE NONCLUSTERED INDEX idx_AnakAsuh_TanggalMasuk ON dbo.Anak_Asuh(tanggal_masuk);
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_AnakAsuh_StatusPendidikan' AND object_id = OBJECT_ID('dbo.Anak_Asuh'))
+                    CREATE NONCLUSTERED INDEX idx_AnakAsuh_StatusPendidikan ON dbo.Anak_Asuh(status_pendidikan);
+            END";
+
+                using (var cmd = new SqlCommand(indexScript, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
 }

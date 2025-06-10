@@ -8,15 +8,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
+
 
 namespace ucpPabd
 {
     public partial class Ortu_Asuh: Form
     {
+        private MemoryCache cache = MemoryCache.Default;
+        private string cacheKey = "data_orangtua_asuh";
+        private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
+
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Ortu_Asuh()
         {
             InitializeComponent();
+            EnsureIndexesOrangTuaAsuh(); 
             LoadData();
             comboPekerjaan.Items.AddRange(new string[] { "PNS", "Jasa Profesional", "Wirausahawan", "TNI/Polri", "Pegawai Swasta" });
             comboStatus.Items.AddRange(new string[] { "Menunggu", "Disetujui", "Ditolak" });
@@ -37,19 +47,36 @@ namespace ucpPabd
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                DataTable dt;
+
+                // Cek apakah data sudah ada di cache
+                if (cache.Contains(cacheKey))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_GetAllOrangTua", con))
+                    dt = (DataTable)cache.Get(cacheKey);
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlCommand cmd = new SqlCommand("sp_GetAllOrangTua", con))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
 
-                        SqlDataAdapter da = new SqlDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
+                            SqlDataAdapter da = new SqlDataAdapter(cmd);
+                            dt = new DataTable();
+                            da.Fill(dt);
 
-                        dataGridViewOrtu.DataSource = dt;
+                            // Simpan ke cache selama 5 menit
+                            CacheItemPolicy policy = new CacheItemPolicy
+                            {
+                                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+                            };
+                            cache.Set(cacheKey, dt, policy);
+                        }
                     }
                 }
+
+                dataGridViewOrtu.DataSource = dt;
             }
             catch (Exception ex)
             {
@@ -114,11 +141,13 @@ namespace ucpPabd
                 return;
             }
 
-            try
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                using (SqlCommand cmd = new SqlCommand("sp_TambahOrtu", con, transaction))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_TambahOrtu", con))
+                    try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
@@ -129,18 +158,21 @@ namespace ucpPabd
                         cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
                         cmd.Parameters.AddWithValue("@status", comboStatus.Text);
 
-                        con.Open();
+
                         cmd.ExecuteNonQuery();
+                        transaction.Commit();
 
                         MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        cache.Remove(cacheKey);
                         ClearForm();
                         LoadData(); // pastikan LoadData() sudah pakai procedure atau query yang tepat
                     }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -181,11 +213,13 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("sp_UpdateOrtu", con))
+                        con.Open();
+                        SqlTransaction transaction = con.BeginTransaction();
+
+                        using (SqlCommand cmd = new SqlCommand("sp_UpdateOrtu", con, transaction))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
 
-                            // Parameter sesuai stored procedure
                             cmd.Parameters.AddWithValue("@orang_tua_id", id);
                             cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
                             cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
@@ -193,10 +227,11 @@ namespace ucpPabd
                             cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
                             cmd.Parameters.AddWithValue("@status", comboStatus.Text);
 
-                            con.Open();
                             cmd.ExecuteNonQuery();
+                            transaction.Commit();
 
                             MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            cache.Remove(cacheKey);
                             ClearForm();
                             LoadData();
                         }
@@ -211,39 +246,83 @@ namespace ucpPabd
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (dataGridViewOrtu.CurrentRow != null)
+            if (dataGridViewOrtu.CurrentRow == null || dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value == DBNull.Value)
             {
-                int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
-                var confirm = MessageBox.Show("Yakin ingin menghapus data?", "Konfirmasi", MessageBoxButtons.YesNo);
-                if (confirm == DialogResult.Yes)
+                MessageBox.Show("Silakan pilih data yang ingin dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
+            string nama = dataGridViewOrtu.CurrentRow.Cells["nama"].Value?.ToString() ?? "(Tidak diketahui)";
+
+            var konfirmasi = MessageBox.Show(
+                $"Apakah Anda yakin ingin menghapus data orang tua:\n\nNama: {nama}\nID: {id}?",
+                "Konfirmasi Hapus Data",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (konfirmasi == DialogResult.Yes)
+            {
+                try
                 {
-                    try
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        using (SqlConnection con = new SqlConnection(connectionString))
+                        con.Open();
+                        SqlTransaction transaction = con.BeginTransaction();
+
+                        using (SqlCommand cmd = new SqlCommand("sp_DeleteOrtu", con, transaction))
                         {
-                            using (SqlCommand cmd = new SqlCommand("sp_DeleteOrtu", con))
-                            {
-                                cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@orang_tua_id", id);
 
-                                // Parameter id untuk delete
-                                cmd.Parameters.AddWithValue("@orang_tua_id", id);
+                            cmd.ExecuteNonQuery();
+                            transaction.Commit();
 
-                                con.Open();
-                                cmd.ExecuteNonQuery();
-
-                                MessageBox.Show("Data berhasil dihapus");
-                                ClearForm();
-                                LoadData();
-                            }
+                            MessageBox.Show("Data berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            cache.Remove(cacheKey);
+                            ClearForm();
+                            LoadData();
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Gagal menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
+
+        private void EnsureIndexesOrangTuaAsuh()
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string indexScript = @"
+        IF OBJECT_ID('dbo.Orang_Tua_Asuh', 'U') IS NOT NULL
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_OrangTuaAsuh_Nama' AND object_id = OBJECT_ID('dbo.Orang_Tua_Asuh'))
+                CREATE NONCLUSTERED INDEX idx_OrangTuaAsuh_Nama ON dbo.Orang_Tua_Asuh(nama);
+
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_OrangTuaAsuh_Telepon' AND object_id = OBJECT_ID('dbo.Orang_Tua_Asuh'))
+                CREATE NONCLUSTERED INDEX idx_OrangTuaAsuh_Telepon ON dbo.Orang_Tua_Asuh(telepon);
+
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_OrangTuaAsuh_Pekerjaan' AND object_id = OBJECT_ID('dbo.Orang_Tua_Asuh'))
+                CREATE NONCLUSTERED INDEX idx_OrangTuaAsuh_Pekerjaan ON dbo.Orang_Tua_Asuh(pekerjaan);
+
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_OrangTuaAsuh_Status' AND object_id = OBJECT_ID('dbo.Orang_Tua_Asuh'))
+                CREATE NONCLUSTERED INDEX idx_OrangTuaAsuh_Status ON dbo.Orang_Tua_Asuh(status);
+        END";
+
+                using (var cmd = new SqlCommand(indexScript, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
 }
    

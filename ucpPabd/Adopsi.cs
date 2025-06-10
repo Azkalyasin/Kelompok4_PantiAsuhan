@@ -8,15 +8,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
 
 namespace ucpPabd
 {
     public partial class Adopsi: Form
     {
+        private readonly MemoryCache _cache = MemoryCache.Default;
+        private readonly string _cacheKey = "AdopsiData";
+        private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Adopsi()
         {
             InitializeComponent();
+            EnsureIndexesAdopsi();
             comboStatus.Items.AddRange(new string[] { "Proses", "Selesai", "Dibatalkan" });
             LoadData();
             dataGridViewAsuh.CellClick += DataGridViewAdopsi_CellClick;
@@ -31,6 +39,13 @@ namespace ucpPabd
         {
             try
             {
+                if (_cache.Contains(_cacheKey))
+                {
+                    // Ambil data dari cache
+                    dataGridViewAsuh.DataSource = _cache.Get(_cacheKey) as DataTable;
+                    return;
+                }
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand("sp_ReadAdopsi", con);
@@ -40,6 +55,9 @@ namespace ucpPabd
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dataGridViewAsuh.DataSource = dt;
+
+                    // Simpan ke cache
+                    _cache.Set(_cacheKey, dt, _cachePolicy);
                 }
             }
             catch (Exception ex)
@@ -111,6 +129,7 @@ namespace ucpPabd
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
 
                 // Validasi input awal
                 if (string.IsNullOrWhiteSpace(txtNamaAnak.Text) ||
@@ -136,24 +155,26 @@ namespace ucpPabd
 
                 // Cari anak_id berdasarkan nama anak
                 string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
-                SqlCommand cmdAnak = new SqlCommand(queryAnak, con);
+                SqlCommand cmdAnak = new SqlCommand(queryAnak, con, transaction);
                 cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
                 object resultAnak = cmdAnak.ExecuteScalar();
 
                 if (resultAnak == null)
                 {
+                    transaction.Rollback();
                     MessageBox.Show("Nama anak tidak ditemukan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Cari orang_tua_id berdasarkan nama orang tua
                 string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
-                SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con);
+                SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con, transaction);
                 cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
                 object resultOrtu = cmdOrtu.ExecuteScalar();
 
                 if (resultOrtu == null)
                 {
+                    transaction.Rollback();
                     MessageBox.Show("Nama orang tua tidak ditemukan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -182,7 +203,7 @@ namespace ucpPabd
                     return;
                 }
 
-                SqlCommand cmd = new SqlCommand("sp_TambahAdopsi", con);
+                SqlCommand cmd = new SqlCommand("sp_TambahAdopsi", con, transaction);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
                 cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
@@ -192,12 +213,15 @@ namespace ucpPabd
                 try
                 {
                     cmd.ExecuteNonQuery();
+                    transaction.Commit();
                     MessageBox.Show("Data adopsi berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    _cache.Remove(_cacheKey);
                     ClearForm();
                     LoadData();
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     MessageBox.Show("Gagal menambahkan data adopsi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -213,6 +237,7 @@ namespace ucpPabd
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
+                    SqlTransaction transaction = con.BeginTransaction();
 
                     // Validasi input awal
                     if (string.IsNullOrWhiteSpace(txtNamaAnak.Text) ||
@@ -232,25 +257,27 @@ namespace ucpPabd
 
                     // Ambil ID anak berdasarkan nama
                     string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
-                    SqlCommand cmdAnak = new SqlCommand(queryAnak, con);
+                    SqlCommand cmdAnak = new SqlCommand(queryAnak, con, transaction);
                     cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
                     object resultAnak = cmdAnak.ExecuteScalar();
 
                     if (resultAnak == null)
                     {
+                        transaction.Rollback();
                         MessageBox.Show("Nama anak tidak ditemukan.");
                         return;
                     }
 
                     // Ambil ID orang tua berdasarkan nama
                     string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
-                    SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con);
+                    SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con, transaction);
                     cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
                     object resultOrtu = cmdOrtu.ExecuteScalar();
 
                     if (resultOrtu == null)
                     {
-                        MessageBox.Show("Nama orang tua tidak ditemukan.");
+                        transaction.Rollback();
+                        MessageBox.Show("Nama Orangtua tidak ditemukan.");
                         return;
                     }
 
@@ -271,7 +298,7 @@ namespace ucpPabd
                         return;
                     }
 
-                    SqlCommand cmd = new SqlCommand("sp_UpdateAdopsi", con);
+                    SqlCommand cmd = new SqlCommand("sp_UpdateAdopsi", con, transaction);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@adopsi_id", adopsiId);
                     cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
@@ -283,12 +310,15 @@ namespace ucpPabd
                     try
                     {
                         cmd.ExecuteNonQuery();
+                        transaction.Commit();
                         MessageBox.Show("Data adopsi berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _cache.Remove(_cacheKey);
                         ClearForm();
                         LoadData();
                     }
                     catch (Exception ex)
                     {
+                        transaction.Rollback();
                         MessageBox.Show("Gagal memperbarui data adopsi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -308,20 +338,59 @@ namespace ucpPabd
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        SqlCommand cmd = new SqlCommand("sp_DeleteAdopsi", con);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@adopsi_id", id);
-
-
                         con.Open();
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Data berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearForm();
-                        LoadData();
+                        SqlTransaction transaction = con.BeginTransaction();
+
+                        try
+                        {
+                            SqlCommand cmd = new SqlCommand("sp_DeleteAdopsi", con, transaction);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@adopsi_id", id);
+
+                            cmd.ExecuteNonQuery();
+                            transaction.Commit();
+                            MessageBox.Show("Data berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            _cache.Remove(_cacheKey);
+                            ClearForm();
+                            LoadData();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            MessageBox.Show("Gagal menghapus data adopsi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                     }
                 }
             }
         }
+
+        private void EnsureIndexesAdopsi()
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string indexScript = @"
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Adopsi_AnakId')
+    BEGIN
+        CREATE NONCLUSTERED INDEX idx_Adopsi_AnakId ON Adopsi(anak_id)
+    END;
+
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'idx_Adopsi_OrangtuaId')
+    BEGIN
+        CREATE NONCLUSTERED INDEX idx_Adopsi_OrangtuaId ON Adopsi(orang_tua_id)
+    END;
+";
+
+                using (SqlCommand cmd = new SqlCommand(indexScript, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
 
         private void txtAnakid_TextChanged(object sender, EventArgs e)
         {

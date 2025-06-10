@@ -8,15 +8,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
+
 
 namespace ucpPabd
 {
     public partial class Pemasukan: Form
     {
+        private readonly MemoryCache _cache = MemoryCache.Default;
+        private readonly string _cacheKey = "PemasukanData";
+        private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
+
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Pemasukan()
         {
             InitializeComponent();
+            EnsureIndexesPemasukan();
             comboPemasukan.Items.AddRange(new string[] { "Donasi", "Bantuan Pemerintah", "Sponsor", "Lainnya" });
             LoadData();
             dataGridViewPemasukan.CellClick += DataGridViewPemasukan_CellClick;
@@ -26,6 +36,12 @@ namespace ucpPabd
         {
             try
             {
+                if (_cache.Contains(_cacheKey))
+                {
+                    dataGridViewPemasukan.DataSource = _cache.Get(_cacheKey) as DataTable;
+                    return;
+                }
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand("sp_ReadPemasukan", con);
@@ -34,8 +50,10 @@ namespace ucpPabd
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
-
                     dataGridViewPemasukan.DataSource = dt;
+
+                    // Simpan ke cache
+                    _cache.Set(_cacheKey, dt, _cachePolicy);
                 }
             }
             catch (Exception ex)
@@ -122,6 +140,7 @@ namespace ucpPabd
                     transaction.Commit();
                     MessageBox.Show("Data pemasukan berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
+                    _cache.Remove(_cacheKey);
                     LoadData();
                 }
                 catch (Exception ex)
@@ -180,6 +199,7 @@ namespace ucpPabd
                         transaction.Commit();
                         MessageBox.Show("Data pemasukan berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
+                        _cache.Remove(_cacheKey);
                         LoadData();
                     }
                     catch (Exception ex)
@@ -219,6 +239,7 @@ namespace ucpPabd
                             transaction.Commit();
                             MessageBox.Show("Data pemasukan berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
+                            _cache.Remove(_cacheKey);
                             LoadData();
                         }
                         catch (Exception ex)
@@ -230,6 +251,28 @@ namespace ucpPabd
                 }
             }
      
+        }
+        private void EnsureIndexesPemasukan()
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string indexScript = @"
+        IF OBJECT_ID('dbo.Pemasukan', 'U') IS NOT NULL
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_Pemasukan_Kategori' AND object_id = OBJECT_ID('dbo.Pemasukan'))
+                CREATE NONCLUSTERED INDEX idx_Pemasukan_Kategori ON dbo.Pemasukan(kategori);
+
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_Pemasukan_Tanggal' AND object_id = OBJECT_ID('dbo.Pemasukan'))
+                CREATE NONCLUSTERED INDEX idx_Pemasukan_Tanggal ON dbo.Pemasukan(tanggal);
+        END";
+
+                using (var cmd = new SqlCommand(indexScript, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
     }

@@ -5,18 +5,29 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
+
 
 namespace ucpPabd
 {
     public partial class Pengeluaran: Form
     {
+        private MemoryCache cache = MemoryCache.Default;
+        private string cacheKey = "data_pengeluaran";
+        private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
+
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Pengeluaran()
         {
             InitializeComponent();
+            EnsureIndexesPengeluaran();
             comboPengeluaran.Items.AddRange(new string[] { "Makanan", "Pendidikan", "Kesehatan", "Operasional", "Lainnya" });
             LoadData();
             dataGridViewPengeluaran.CellClick += DataGridViewPengeluaran_CellClick;
@@ -27,15 +38,28 @@ namespace ucpPabd
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                DataTable dt = cache.Get(cacheKey) as DataTable;
+
+                if (dt == null)
                 {
-                    SqlCommand cmd = new SqlCommand("sp_ReadPengeluaran", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dataGridViewPengeluaran.DataSource = dt;
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        SqlCommand cmd = new SqlCommand("sp_ReadPengeluaran", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        dt = new DataTable();
+                        da.Fill(dt);
+
+                        // Cache selama 5 menit
+                        CacheItemPolicy policy = new CacheItemPolicy
+                        {
+                            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+                        };
+                        cache.Set(cacheKey, dt, policy);
+                    }
                 }
+
+                dataGridViewPengeluaran.DataSource = dt;
             }
             catch (Exception ex)
             {
@@ -49,6 +73,15 @@ namespace ucpPabd
             dateTime.Value = DateTime.Now;
             comboPengeluaran.SelectedIndex = -1;
         }
+
+        private void ClearCache()
+        {
+            if (cache.Contains(cacheKey))
+            {
+                cache.Remove(cacheKey);
+            }
+        }
+
 
         private void DataGridViewPengeluaran_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -147,6 +180,7 @@ namespace ucpPabd
                     cmd.Parameters.AddWithValue("@tanggal", tanggal);
                     cmd.ExecuteNonQuery();
                     transaction.Commit();
+                    ClearCache();
                     MessageBox.Show("Data pengeluaran berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     LoadData();
@@ -211,6 +245,7 @@ namespace ucpPabd
                         cmd.Parameters.AddWithValue("@tanggal", tanggal);
                         cmd.ExecuteNonQuery();
                         transaction.Commit();
+                        ClearCache();
                         MessageBox.Show("Data berhasil diperbarui", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         LoadData();
@@ -247,6 +282,7 @@ namespace ucpPabd
                             cmd.Parameters.AddWithValue("@pengeluaran_id", id);
                             cmd.ExecuteNonQuery();
                             transaction.Commit();
+                            ClearCache();
                             MessageBox.Show("Data berhasil dihapus", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             ClearForm();
                             LoadData();
@@ -265,5 +301,29 @@ namespace ucpPabd
         {
 
         }
+
+        private void EnsureIndexesPengeluaran()
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string indexScript = @"
+        IF OBJECT_ID('dbo.Pengeluaran', 'U') IS NOT NULL
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_Pengeluaran_Kategori' AND object_id = OBJECT_ID('dbo.Pengeluaran'))
+                CREATE NONCLUSTERED INDEX idx_Pengeluaran_Kategori ON dbo.Pengeluaran(kategori);
+
+            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='idx_Pengeluaran_Tanggal' AND object_id = OBJECT_ID('dbo.Pengeluaran'))
+                CREATE NONCLUSTERED INDEX idx_Pengeluaran_Tanggal ON dbo.Pengeluaran(tanggal);
+        END";
+
+                using (var cmd = new SqlCommand(indexScript, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
 }

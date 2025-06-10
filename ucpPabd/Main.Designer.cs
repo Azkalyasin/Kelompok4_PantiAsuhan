@@ -29,15 +29,18 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnSaldo = new System.Windows.Forms.Button();
+            this.btnPengeluaran = new System.Windows.Forms.Button();
+            this.btnPemasukan = new System.Windows.Forms.Button();
             this.btnAdopsi = new System.Windows.Forms.Button();
             this.btnAnak = new System.Windows.Forms.Button();
             this.btnOrtu = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnLogout = new System.Windows.Forms.Button();
-            this.btnPemasukan = new System.Windows.Forms.Button();
-            this.btnPengeluaran = new System.Windows.Forms.Button();
-            this.btnSaldo = new System.Windows.Forms.Button();
+            this.buttonlaporanpemasukan = new System.Windows.Forms.Button();
+            this.laporansaldo = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -47,6 +50,9 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.laporansaldo);
+            this.panel1.Controls.Add(this.buttonlaporanpemasukan);
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.btnSaldo);
             this.panel1.Controls.Add(this.btnPengeluaran);
             this.panel1.Controls.Add(this.btnPemasukan);
@@ -55,9 +61,49 @@
             this.panel1.Controls.Add(this.btnOrtu);
             this.panel1.Location = new System.Drawing.Point(-1, 54);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(282, 534);
+            this.panel1.Size = new System.Drawing.Size(513, 534);
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(295, 31);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(172, 39);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "laporan pengeluaran";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnSaldo
+            // 
+            this.btnSaldo.Location = new System.Drawing.Point(45, 443);
+            this.btnSaldo.Name = "btnSaldo";
+            this.btnSaldo.Size = new System.Drawing.Size(166, 39);
+            this.btnSaldo.TabIndex = 7;
+            this.btnSaldo.Text = "saldo";
+            this.btnSaldo.UseVisualStyleBackColor = true;
+            this.btnSaldo.Click += new System.EventHandler(this.btnSaldo_Click);
+            // 
+            // btnPengeluaran
+            // 
+            this.btnPengeluaran.Location = new System.Drawing.Point(45, 346);
+            this.btnPengeluaran.Name = "btnPengeluaran";
+            this.btnPengeluaran.Size = new System.Drawing.Size(166, 39);
+            this.btnPengeluaran.TabIndex = 6;
+            this.btnPengeluaran.Text = "Pengeluaran";
+            this.btnPengeluaran.UseVisualStyleBackColor = true;
+            this.btnPengeluaran.Click += new System.EventHandler(this.btnPengeluaran_Click);
+            // 
+            // btnPemasukan
+            // 
+            this.btnPemasukan.Location = new System.Drawing.Point(45, 269);
+            this.btnPemasukan.Name = "btnPemasukan";
+            this.btnPemasukan.Size = new System.Drawing.Size(166, 39);
+            this.btnPemasukan.TabIndex = 5;
+            this.btnPemasukan.Text = "Pemasukan";
+            this.btnPemasukan.UseVisualStyleBackColor = true;
+            this.btnPemasukan.Click += new System.EventHandler(this.btnPemasukan_Click);
             // 
             // btnAdopsi
             // 
@@ -123,35 +169,25 @@
             this.btnLogout.UseVisualStyleBackColor = true;
             this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
-            // btnPemasukan
+            // buttonlaporanpemasukan
             // 
-            this.btnPemasukan.Location = new System.Drawing.Point(45, 269);
-            this.btnPemasukan.Name = "btnPemasukan";
-            this.btnPemasukan.Size = new System.Drawing.Size(166, 39);
-            this.btnPemasukan.TabIndex = 5;
-            this.btnPemasukan.Text = "Pemasukan";
-            this.btnPemasukan.UseVisualStyleBackColor = true;
-            this.btnPemasukan.Click += new System.EventHandler(this.btnPemasukan_Click);
+            this.buttonlaporanpemasukan.Location = new System.Drawing.Point(295, 105);
+            this.buttonlaporanpemasukan.Name = "buttonlaporanpemasukan";
+            this.buttonlaporanpemasukan.Size = new System.Drawing.Size(172, 39);
+            this.buttonlaporanpemasukan.TabIndex = 8;
+            this.buttonlaporanpemasukan.Text = "laporan pemasukan";
+            this.buttonlaporanpemasukan.UseVisualStyleBackColor = true;
+            this.buttonlaporanpemasukan.Click += new System.EventHandler(this.buttonlaporanpemasukan_Click);
             // 
-            // btnPengeluaran
+            // laporansaldo
             // 
-            this.btnPengeluaran.Location = new System.Drawing.Point(45, 346);
-            this.btnPengeluaran.Name = "btnPengeluaran";
-            this.btnPengeluaran.Size = new System.Drawing.Size(166, 39);
-            this.btnPengeluaran.TabIndex = 6;
-            this.btnPengeluaran.Text = "Pengeluaran";
-            this.btnPengeluaran.UseVisualStyleBackColor = true;
-            this.btnPengeluaran.Click += new System.EventHandler(this.btnPengeluaran_Click);
-            // 
-            // btnSaldo
-            // 
-            this.btnSaldo.Location = new System.Drawing.Point(45, 443);
-            this.btnSaldo.Name = "btnSaldo";
-            this.btnSaldo.Size = new System.Drawing.Size(166, 39);
-            this.btnSaldo.TabIndex = 7;
-            this.btnSaldo.Text = "saldo";
-            this.btnSaldo.UseVisualStyleBackColor = true;
-            this.btnSaldo.Click += new System.EventHandler(this.btnSaldo_Click);
+            this.laporansaldo.Location = new System.Drawing.Point(295, 189);
+            this.laporansaldo.Name = "laporansaldo";
+            this.laporansaldo.Size = new System.Drawing.Size(172, 39);
+            this.laporansaldo.TabIndex = 9;
+            this.laporansaldo.Text = "Laporan Saldo";
+            this.laporansaldo.UseVisualStyleBackColor = true;
+            this.laporansaldo.Click += new System.EventHandler(this.laporansaldo_Click);
             // 
             // Main
             // 
@@ -181,5 +217,8 @@
         private System.Windows.Forms.Button btnSaldo;
         private System.Windows.Forms.Button btnPengeluaran;
         private System.Windows.Forms.Button btnPemasukan;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonlaporanpemasukan;
+        private System.Windows.Forms.Button laporansaldo;
     }
 }
