@@ -32,18 +32,18 @@ namespace ucpPabd
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string query = @"
-                        SELECT saldo_id, total_saldo, tanggal_update 
-                        FROM Saldo 
-                        ORDER BY tanggal_update DESC";
+                    using (SqlCommand cmd = new SqlCommand("sp_GetSaldoData", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
 
-                    dataGridViewSaldo.DataSource = dt;
+                        dataGridViewSaldo.DataSource = dt;
 
-                    FormatDataGridView();
+                        FormatDataGridView();
+                    }
                 }
             }
             catch (Exception ex)
@@ -80,6 +80,11 @@ namespace ucpPabd
             dataGridViewSaldo.ReadOnly = true;
         }
         private void dataGridViewSaldo_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridViewSaldo_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
 
         }
