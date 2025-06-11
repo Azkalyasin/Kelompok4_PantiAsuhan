@@ -32,11 +32,8 @@ namespace ucpPabd
             string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;"; // Update with your connection string
 
             string query = @"
-            SELECT Pemasukan.pemasukan_id, Pemasukan.kategori, Pemasukan.jumlah, Pemasukan.tanggal, Pengeluaran.pengeluaran_id, Pengeluaran.kategori AS Expr1, Pengeluaran.jumlah AS Expr2, Pengeluaran.tanggal AS Expr3, Saldo.saldo_id, 
-                  Saldo.total_saldo, Saldo.tanggal_update
-            FROM     Pemasukan INNER JOIN
-                  Saldo ON Pemasukan.pemasukan_id = Saldo.pemasukan_id INNER JOIN
-                  Pengeluaran ON Saldo.pengeluaran_id = Pengeluaran.pengeluaran_id";
+            SELECT saldo_id, total_saldo, tanggal_update
+            FROM     Saldo";
 
             DataTable dt = new DataTable();
 
