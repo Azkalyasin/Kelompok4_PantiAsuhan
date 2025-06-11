@@ -1,6 +1,6 @@
 ﻿namespace ucpPabd
 {
-    partial class reportsaldo
+    partial class ReportKeuangan
     {
         /// <summary>
         /// Required designer variable.
@@ -29,30 +29,46 @@
         private void InitializeComponent()
         {
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // reportViewer1
             // 
-            this.reportViewer1.Location = new System.Drawing.Point(0, 187);
+            this.reportViewer1.Location = new System.Drawing.Point(2, 153);
             this.reportViewer1.Name = "reportViewer1";
-            this.reportViewer1.Size = new System.Drawing.Size(802, 266);
+            this.reportViewer1.Size = new System.Drawing.Size(797, 296);
             this.reportViewer1.TabIndex = 0;
             // 
-            // reportsaldo
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(307, 50);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(165, 20);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Laporan Keuangan";
+            // 
+            // ReportKeuangan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.reportViewer1);
-            this.Name = "reportsaldo";
-            this.Text = "reportsaldo";
-            this.Load += new System.EventHandler(this.reportsaldo_Load);
+            this.Name = "ReportKeuangan";
+            this.Text = "ReportKeuangan";
+            this.Load += new System.EventHandler(this.ReportKeuangan_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
+        private System.Windows.Forms.Label label1;
     }
 }

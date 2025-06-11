@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace ucpPabd
 {
-    public partial class Saldo: Form
+    public partial class Saldo : Form
     {
         string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Saldo()

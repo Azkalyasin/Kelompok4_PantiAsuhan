@@ -35,13 +35,12 @@
             // dataGridViewSaldo
             // 
             this.dataGridViewSaldo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewSaldo.Location = new System.Drawing.Point(39, 66);
+            this.dataGridViewSaldo.Location = new System.Drawing.Point(3, 192);
             this.dataGridViewSaldo.Name = "dataGridViewSaldo";
             this.dataGridViewSaldo.RowHeadersWidth = 51;
             this.dataGridViewSaldo.RowTemplate.Height = 24;
-            this.dataGridViewSaldo.Size = new System.Drawing.Size(733, 334);
+            this.dataGridViewSaldo.Size = new System.Drawing.Size(796, 255);
             this.dataGridViewSaldo.TabIndex = 0;
-            this.dataGridViewSaldo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewSaldo_CellContentClick);
             // 
             // Saldo
             // 
@@ -51,7 +50,6 @@
             this.Controls.Add(this.dataGridViewSaldo);
             this.Name = "Saldo";
             this.Text = "Saldo";
-            this.Load += new System.EventHandler(this.Saldo_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSaldo)).EndInit();
             this.ResumeLayout(false);
 

@@ -78,22 +78,10 @@ namespace ucpPabd
             s.Show();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnLaporanKeuangan_Click(object sender, EventArgs e)
         {
-            reportpengeluaran rpl = new reportpengeluaran();
-            rpl.Show();
-        }
-
-        private void buttonlaporanpemasukan_Click(object sender, EventArgs e)
-        {
-            reportpemasukan rpm = new reportpemasukan();
-            rpm.Show();
-        }
-
-        private void laporansaldo_Click(object sender, EventArgs e)
-        {
-            reportsaldo rs = new reportsaldo();
-            rs.Show();  
+            ReportKeuangan rk = new ReportKeuangan();
+            rk.Show();
         }
     }
 }

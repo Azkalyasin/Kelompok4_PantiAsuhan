@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSetKeuangan" targetNamespace="http://tempuri.org/DataSetKeuangan.xsd" xmlns:mstns="http://tempuri.org/DataSetKeuangan.xsd" xmlns="http://tempuri.org/DataSetKeuangan.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="panti_asuhanConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="panti_asuhanConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ucpPabd.Properties.Settings.GlobalReference.Default.panti_asuhanConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="DataTable1TableAdapter" GeneratorDataComponentClassName="DataTable1TableAdapter" Name="DataTable1" UserDataComponentName="DataTable1TableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="panti_asuhanConnectionString (Settings)" DbObjectName="SELECT s.saldo_id, p.tanggal, p.kategori, p.jumlah AS Pemasukan, 0 AS Pengeluaran, s.total_saldo FROM Saldo AS s INNER JOIN Pemasukan AS p ON s.pemasukan_id = p.pemasukan_id UNION ALL SELECT s.saldo_id, e.tanggal, e.kategori, 0 AS Pemasukan, e.jumlah AS Pengeluaran, s.total_saldo FROM Saldo AS s INNER JOIN Pengeluaran AS e ON s.pengeluaran_id = e.pengeluaran_id" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT tanggal AS Tanggal, kategori AS Keterangan, Pemasukan, Pengeluaran, total_saldo AS Saldo
+FROM     (SELECT s.saldo_id, p.tanggal, p.kategori, p.jumlah AS Pemasukan, 0 AS Pengeluaran, s.total_saldo
+                  FROM      Saldo AS s INNER JOIN
+                                    Pemasukan AS p ON s.pemasukan_id = p.pemasukan_id
+                  UNION ALL
+                  SELECT s.saldo_id, e.tanggal, e.kategori, 0 AS Pemasukan, e.jumlah AS Pengeluaran, s.total_saldo
+                  FROM     Saldo AS s INNER JOIN
+                                    Pengeluaran AS e ON s.pengeluaran_id = e.pengeluaran_id) AS LaporanGabungan
+ORDER BY saldo_id</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="Tanggal" DataSetColumn="Tanggal" />
+              <Mapping SourceColumn="Keterangan" DataSetColumn="Keterangan" />
+              <Mapping SourceColumn="Pemasukan" DataSetColumn="Pemasukan" />
+              <Mapping SourceColumn="Pengeluaran" DataSetColumn="Pengeluaran" />
+              <Mapping SourceColumn="Saldo" DataSetColumn="Saldo" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSetKeuangan" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DataSetKeuangan" msprop:Generator_DataSetName="DataSetKeuangan">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableVarName="tableDataTable1" msprop:Generator_UserTableName="DataTable1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Tanggal" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Tanggal" msprop:Generator_ColumnPropNameInTable="TanggalColumn" msprop:Generator_ColumnVarNameInTable="columnTanggal" msprop:Generator_UserColumnName="Tanggal" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Keterangan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Keterangan" msprop:Generator_ColumnPropNameInTable="KeteranganColumn" msprop:Generator_ColumnVarNameInTable="columnKeterangan" msprop:Generator_UserColumnName="Keterangan" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Pemasukan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Pemasukan" msprop:Generator_ColumnPropNameInTable="PemasukanColumn" msprop:Generator_ColumnVarNameInTable="columnPemasukan" msprop:Generator_UserColumnName="Pemasukan" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Pengeluaran" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Pengeluaran" msprop:Generator_ColumnPropNameInTable="PengeluaranColumn" msprop:Generator_ColumnVarNameInTable="columnPengeluaran" msprop:Generator_UserColumnName="Pengeluaran" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Saldo" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Saldo" msprop:Generator_ColumnPropNameInTable="SaldoColumn" msprop:Generator_ColumnVarNameInTable="columnSaldo" msprop:Generator_UserColumnName="Saldo" type="xs:decimal" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

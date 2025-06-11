@@ -20,9 +20,9 @@ namespace ucpPabd {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("DataSetPemasukan")]
+    [global::System.Xml.Serialization.XmlRootAttribute("DataSetKeuangan")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class DataSetPemasukan : global::System.Data.DataSet {
+    public partial class DataSetKeuangan : global::System.Data.DataSet {
         
         private DataTable1DataTable tableDataTable1;
         
@@ -30,7 +30,7 @@ namespace ucpPabd {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public DataSetPemasukan() {
+        public DataSetKeuangan() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -41,7 +41,7 @@ namespace ucpPabd {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        protected DataSetPemasukan(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected DataSetKeuangan(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -127,7 +127,7 @@ namespace ucpPabd {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            DataSetPemasukan cln = ((DataSetPemasukan)(base.Clone()));
+            DataSetKeuangan cln = ((DataSetKeuangan)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -199,9 +199,9 @@ namespace ucpPabd {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "DataSetPemasukan";
+            this.DataSetName = "DataSetKeuangan";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/DataSetPemasukan.xsd";
+            this.Namespace = "http://tempuri.org/DataSetKeuangan.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
             this.tableDataTable1 = new DataTable1DataTable();
@@ -225,7 +225,7 @@ namespace ucpPabd {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            DataSetPemasukan ds = new DataSetPemasukan();
+            DataSetKeuangan ds = new DataSetKeuangan();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -279,19 +279,15 @@ namespace ucpPabd {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class DataTable1DataTable : global::System.Data.TypedTableBase<DataTable1Row> {
             
-            private global::System.Data.DataColumn columnpemasukan_id;
+            private global::System.Data.DataColumn columnTanggal;
             
-            private global::System.Data.DataColumn columnkategori;
+            private global::System.Data.DataColumn columnKeterangan;
             
-            private global::System.Data.DataColumn columnjumlah;
+            private global::System.Data.DataColumn columnPemasukan;
             
-            private global::System.Data.DataColumn columntanggal;
+            private global::System.Data.DataColumn columnPengeluaran;
             
-            private global::System.Data.DataColumn columnsaldo_id;
-            
-            private global::System.Data.DataColumn columntotal_saldo;
-            
-            private global::System.Data.DataColumn columntanggal_update;
+            private global::System.Data.DataColumn columnSaldo;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
@@ -328,57 +324,41 @@ namespace ucpPabd {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn pemasukan_idColumn {
+            public global::System.Data.DataColumn TanggalColumn {
                 get {
-                    return this.columnpemasukan_id;
+                    return this.columnTanggal;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn kategoriColumn {
+            public global::System.Data.DataColumn KeteranganColumn {
                 get {
-                    return this.columnkategori;
+                    return this.columnKeterangan;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn jumlahColumn {
+            public global::System.Data.DataColumn PemasukanColumn {
                 get {
-                    return this.columnjumlah;
+                    return this.columnPemasukan;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn tanggalColumn {
+            public global::System.Data.DataColumn PengeluaranColumn {
                 get {
-                    return this.columntanggal;
+                    return this.columnPengeluaran;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn saldo_idColumn {
+            public global::System.Data.DataColumn SaldoColumn {
                 get {
-                    return this.columnsaldo_id;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn total_saldoColumn {
-                get {
-                    return this.columntotal_saldo;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn tanggal_updateColumn {
-                get {
-                    return this.columntanggal_update;
+                    return this.columnSaldo;
                 }
             }
             
@@ -419,27 +399,17 @@ namespace ucpPabd {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DataTable1Row AddDataTable1Row(string kategori, decimal jumlah, System.DateTime tanggal, decimal total_saldo, System.DateTime tanggal_update) {
+            public DataTable1Row AddDataTable1Row(System.DateTime Tanggal, string Keterangan, decimal Pemasukan, decimal Pengeluaran, decimal Saldo) {
                 DataTable1Row rowDataTable1Row = ((DataTable1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        null,
-                        kategori,
-                        jumlah,
-                        tanggal,
-                        null,
-                        total_saldo,
-                        tanggal_update};
+                        Tanggal,
+                        Keterangan,
+                        Pemasukan,
+                        Pengeluaran,
+                        Saldo};
                 rowDataTable1Row.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDataTable1Row);
                 return rowDataTable1Row;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DataTable1Row FindBypemasukan_idsaldo_id(int pemasukan_id, int saldo_id) {
-                return ((DataTable1Row)(this.Rows.Find(new object[] {
-                            pemasukan_id,
-                            saldo_id})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -459,50 +429,32 @@ namespace ucpPabd {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             internal void InitVars() {
-                this.columnpemasukan_id = base.Columns["pemasukan_id"];
-                this.columnkategori = base.Columns["kategori"];
-                this.columnjumlah = base.Columns["jumlah"];
-                this.columntanggal = base.Columns["tanggal"];
-                this.columnsaldo_id = base.Columns["saldo_id"];
-                this.columntotal_saldo = base.Columns["total_saldo"];
-                this.columntanggal_update = base.Columns["tanggal_update"];
+                this.columnTanggal = base.Columns["Tanggal"];
+                this.columnKeterangan = base.Columns["Keterangan"];
+                this.columnPemasukan = base.Columns["Pemasukan"];
+                this.columnPengeluaran = base.Columns["Pengeluaran"];
+                this.columnSaldo = base.Columns["Saldo"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             private void InitClass() {
-                this.columnpemasukan_id = new global::System.Data.DataColumn("pemasukan_id", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnpemasukan_id);
-                this.columnkategori = new global::System.Data.DataColumn("kategori", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnkategori);
-                this.columnjumlah = new global::System.Data.DataColumn("jumlah", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnjumlah);
-                this.columntanggal = new global::System.Data.DataColumn("tanggal", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columntanggal);
-                this.columnsaldo_id = new global::System.Data.DataColumn("saldo_id", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsaldo_id);
-                this.columntotal_saldo = new global::System.Data.DataColumn("total_saldo", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columntotal_saldo);
-                this.columntanggal_update = new global::System.Data.DataColumn("tanggal_update", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columntanggal_update);
-                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
-                                this.columnpemasukan_id,
-                                this.columnsaldo_id}, true));
-                this.columnpemasukan_id.AutoIncrement = true;
-                this.columnpemasukan_id.AutoIncrementSeed = -1;
-                this.columnpemasukan_id.AutoIncrementStep = -1;
-                this.columnpemasukan_id.AllowDBNull = false;
-                this.columnpemasukan_id.ReadOnly = true;
-                this.columnkategori.AllowDBNull = false;
-                this.columnkategori.MaxLength = 25;
-                this.columnjumlah.AllowDBNull = false;
-                this.columntanggal.AllowDBNull = false;
-                this.columnsaldo_id.AutoIncrement = true;
-                this.columnsaldo_id.AutoIncrementSeed = -1;
-                this.columnsaldo_id.AutoIncrementStep = -1;
-                this.columnsaldo_id.AllowDBNull = false;
-                this.columnsaldo_id.ReadOnly = true;
-                this.columntotal_saldo.AllowDBNull = false;
+                this.columnTanggal = new global::System.Data.DataColumn("Tanggal", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTanggal);
+                this.columnKeterangan = new global::System.Data.DataColumn("Keterangan", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnKeterangan);
+                this.columnPemasukan = new global::System.Data.DataColumn("Pemasukan", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnPemasukan);
+                this.columnPengeluaran = new global::System.Data.DataColumn("Pengeluaran", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnPengeluaran);
+                this.columnSaldo = new global::System.Data.DataColumn("Saldo", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSaldo);
+                this.columnTanggal.ReadOnly = true;
+                this.columnKeterangan.ReadOnly = true;
+                this.columnKeterangan.MaxLength = 25;
+                this.columnPemasukan.ReadOnly = true;
+                this.columnPengeluaran.ReadOnly = true;
+                this.columnSaldo.ReadOnly = true;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -570,7 +522,7 @@ namespace ucpPabd {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                DataSetPemasukan ds = new DataSetPemasukan();
+                DataSetKeuangan ds = new DataSetKeuangan();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -645,96 +597,142 @@ namespace ucpPabd {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int pemasukan_id {
-                get {
-                    return ((int)(this[this.tableDataTable1.pemasukan_idColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.pemasukan_idColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public string kategori {
-                get {
-                    return ((string)(this[this.tableDataTable1.kategoriColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.kategoriColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public decimal jumlah {
-                get {
-                    return ((decimal)(this[this.tableDataTable1.jumlahColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.jumlahColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public System.DateTime tanggal {
-                get {
-                    return ((global::System.DateTime)(this[this.tableDataTable1.tanggalColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.tanggalColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public int saldo_id {
-                get {
-                    return ((int)(this[this.tableDataTable1.saldo_idColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.saldo_idColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public decimal total_saldo {
-                get {
-                    return ((decimal)(this[this.tableDataTable1.total_saldoColumn]));
-                }
-                set {
-                    this[this.tableDataTable1.total_saldoColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public System.DateTime tanggal_update {
+            public System.DateTime Tanggal {
                 get {
                     try {
-                        return ((global::System.DateTime)(this[this.tableDataTable1.tanggal_updateColumn]));
+                        return ((global::System.DateTime)(this[this.tableDataTable1.TanggalColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'tanggal_update\' in table \'DataTable1\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Tanggal\' in table \'DataTable1\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDataTable1.tanggal_updateColumn] = value;
+                    this[this.tableDataTable1.TanggalColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool Istanggal_updateNull() {
-                return this.IsNull(this.tableDataTable1.tanggal_updateColumn);
+            public string Keterangan {
+                get {
+                    try {
+                        return ((string)(this[this.tableDataTable1.KeteranganColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Keterangan\' in table \'DataTable1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTable1.KeteranganColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void Settanggal_updateNull() {
-                this[this.tableDataTable1.tanggal_updateColumn] = global::System.Convert.DBNull;
+            public decimal Pemasukan {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableDataTable1.PemasukanColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Pemasukan\' in table \'DataTable1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTable1.PemasukanColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public decimal Pengeluaran {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableDataTable1.PengeluaranColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Pengeluaran\' in table \'DataTable1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTable1.PengeluaranColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public decimal Saldo {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableDataTable1.SaldoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Saldo\' in table \'DataTable1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTable1.SaldoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsTanggalNull() {
+                return this.IsNull(this.tableDataTable1.TanggalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetTanggalNull() {
+                this[this.tableDataTable1.TanggalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsKeteranganNull() {
+                return this.IsNull(this.tableDataTable1.KeteranganColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetKeteranganNull() {
+                this[this.tableDataTable1.KeteranganColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsPemasukanNull() {
+                return this.IsNull(this.tableDataTable1.PemasukanColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetPemasukanNull() {
+                this[this.tableDataTable1.PemasukanColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsPengeluaranNull() {
+                return this.IsNull(this.tableDataTable1.PengeluaranColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetPengeluaranNull() {
+                this[this.tableDataTable1.PengeluaranColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsSaldoNull() {
+                return this.IsNull(this.tableDataTable1.SaldoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetSaldoNull() {
+                this[this.tableDataTable1.SaldoColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -773,7 +771,7 @@ namespace ucpPabd {
         }
     }
 }
-namespace ucpPabd.DataSetPemasukanTableAdapters {
+namespace ucpPabd.DataSetKeuanganTableAdapters {
     
     
     /// <summary>
@@ -897,13 +895,11 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
             tableMapping.DataSetTable = "DataTable1";
-            tableMapping.ColumnMappings.Add("pemasukan_id", "pemasukan_id");
-            tableMapping.ColumnMappings.Add("kategori", "kategori");
-            tableMapping.ColumnMappings.Add("jumlah", "jumlah");
-            tableMapping.ColumnMappings.Add("tanggal", "tanggal");
-            tableMapping.ColumnMappings.Add("saldo_id", "saldo_id");
-            tableMapping.ColumnMappings.Add("total_saldo", "total_saldo");
-            tableMapping.ColumnMappings.Add("tanggal_update", "tanggal_update");
+            tableMapping.ColumnMappings.Add("Tanggal", "Tanggal");
+            tableMapping.ColumnMappings.Add("Keterangan", "Keterangan");
+            tableMapping.ColumnMappings.Add("Pemasukan", "Pemasukan");
+            tableMapping.ColumnMappings.Add("Pengeluaran", "Pengeluaran");
+            tableMapping.ColumnMappings.Add("Saldo", "Saldo");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -920,10 +916,15 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Pemasukan.pemasukan_id, Pemasukan.kategori, Pemasukan.jumlah, Pemasukan.ta" +
-                "nggal, Saldo.saldo_id, Saldo.total_saldo, Saldo.tanggal_update\r\nFROM     Pemasuk" +
-                "an INNER JOIN\r\n                  Saldo ON Pemasukan.pemasukan_id = Saldo.pemasuk" +
-                "an_id";
+            this._commandCollection[0].CommandText = @"SELECT tanggal AS Tanggal, kategori AS Keterangan, Pemasukan, Pengeluaran, total_saldo AS Saldo
+FROM     (SELECT s.saldo_id, p.tanggal, p.kategori, p.jumlah AS Pemasukan, 0 AS Pengeluaran, s.total_saldo
+                  FROM      Saldo AS s INNER JOIN
+                                    Pemasukan AS p ON s.pemasukan_id = p.pemasukan_id
+                  UNION ALL
+                  SELECT s.saldo_id, e.tanggal, e.kategori, 0 AS Pemasukan, e.jumlah AS Pengeluaran, s.total_saldo
+                  FROM     Saldo AS s INNER JOIN
+                                    Pengeluaran AS e ON s.pengeluaran_id = e.pengeluaran_id) AS LaporanGabungan
+ORDER BY saldo_id";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -931,7 +932,7 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(DataSetPemasukan.DataTable1DataTable dataTable) {
+        public virtual int Fill(DataSetKeuangan.DataTable1DataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -944,9 +945,9 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual DataSetPemasukan.DataTable1DataTable GetData() {
+        public virtual DataSetKeuangan.DataTable1DataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            DataSetPemasukan.DataTable1DataTable dataTable = new DataSetPemasukan.DataTable1DataTable();
+            DataSetKeuangan.DataTable1DataTable dataTable = new DataSetKeuangan.DataTable1DataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -1020,7 +1021,7 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateUpdatedRows(DataSetPemasukan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateUpdatedRows(DataSetKeuangan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1030,7 +1031,7 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateInsertedRows(DataSetPemasukan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateInsertedRows(DataSetKeuangan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -1040,7 +1041,7 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateDeletedRows(DataSetPemasukan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
+        private int UpdateDeletedRows(DataSetKeuangan dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
             return result;
         }
@@ -1074,7 +1075,7 @@ namespace ucpPabd.DataSetPemasukanTableAdapters {
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public virtual int UpdateAll(DataSetPemasukan dataSet) {
+        public virtual int UpdateAll(DataSetKeuangan dataSet) {
             if ((dataSet == null)) {
                 throw new global::System.ArgumentNullException("dataSet");
             }
