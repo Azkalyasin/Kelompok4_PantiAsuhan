@@ -127,6 +127,19 @@ namespace ucpPabd
                 return;
             }
 
+            if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z\s]+$"))
+            {
+                MessageBox.Show("Alamat tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(telepon, @"^\d{10,13}$"))
+            {
+                MessageBox.Show("Nomor telepon hanya boleh berisi angka (10-13 digit).", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
             var konfirmasi = MessageBox.Show(
                 $"Apakah Anda yakin ingin menyimpan data berikut?\n\n" +
                 $"Nama: {nama}\n" +
@@ -217,6 +230,19 @@ namespace ucpPabd
                     MessageBox.Show("Nama tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z\s]+$"))
+                {
+                    MessageBox.Show("Nama tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(telepon, @"^\d{10,13}$"))
+                {
+                    MessageBox.Show("Nomor telepon hanya boleh berisi angka (10-13 digit).", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
 
                 var konfirmasi = MessageBox.Show(
                     $"Apakah Anda yakin ingin mengupdate data ini dengan informasi berikut?\n\n" +

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,7 +73,9 @@ ORDER BY LaporanGabungan.saldo_id;";
 
             // Set the path to the report (.rdlc file)
             // Change this to the actual path of your .rdlc file
-            reportViewer1.LocalReport.ReportPath = @"E:\C++\ucpPabd\ucpPabd\ReportKeuangan.rdlc";
+            //reportViewer1.LocalReport.ReportPath = @"E:\C++\ucpPabd\ucpPabd\ReportKeuangan.rdlc";
+            string reportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportKeuangan.rdlc");
+            reportViewer1.LocalReport.ReportPath = reportPath;
 
             // Refresh the ReportViewer to show the updated report
             reportViewer1.RefreshReport();

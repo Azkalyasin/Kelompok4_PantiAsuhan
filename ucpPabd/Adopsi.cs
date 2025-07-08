@@ -20,6 +20,7 @@ namespace ucpPabd
         {
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
         };
+
         static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
         public Adopsi()
         {
