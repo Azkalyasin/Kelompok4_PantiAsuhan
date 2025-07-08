@@ -47,6 +47,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnKembali = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAnak)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -78,6 +79,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.btnKembali);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateTimeTanggalLahir);
             this.groupBox1.Controls.Add(this.label7);
@@ -166,9 +168,9 @@
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(814, 325);
+            this.btnUpdate.Location = new System.Drawing.Point(757, 325);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(135, 39);
+            this.btnUpdate.Size = new System.Drawing.Size(109, 39);
             this.btnUpdate.TabIndex = 12;
             this.btnUpdate.Text = "UpdateData";
             this.btnUpdate.UseVisualStyleBackColor = true;
@@ -255,6 +257,16 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Nama";
             // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(899, 325);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 4;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // Anak_Asuh
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -295,5 +307,6 @@
         private System.Windows.Forms.ComboBox comboStatusPendidkan;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.DateTimePicker dateTimeTanggalLahir;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

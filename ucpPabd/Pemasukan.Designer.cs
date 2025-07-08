@@ -41,6 +41,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridViewPemasukan = new System.Windows.Forms.DataGridView();
+            this.btnKembali = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPemasukan)).BeginInit();
@@ -48,6 +49,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnKembali);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Controls.Add(this.dateTime);
             this.groupBox1.Controls.Add(this.label4);
@@ -175,6 +177,16 @@
             this.dataGridViewPemasukan.Size = new System.Drawing.Size(839, 241);
             this.dataGridViewPemasukan.TabIndex = 9;
             // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(561, 271);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 19;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // Pemasukan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -184,6 +196,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "Pemasukan";
             this.Text = "Pemasukan";
+            this.Load += new System.EventHandler(this.Pemasukan_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -207,5 +220,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.DataGridView dataGridViewPemasukan;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

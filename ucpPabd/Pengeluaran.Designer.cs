@@ -41,6 +41,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnKembali = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPengeluaran)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -60,6 +61,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnKembali);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Controls.Add(this.dateTime);
             this.groupBox1.Controls.Add(this.label4);
@@ -172,9 +174,20 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(145, 66);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(132, 16);
+            this.label2.Size = new System.Drawing.Size(139, 16);
             this.label2.TabIndex = 0;
-            this.label2.Text = "kategoryPemasukan";
+            this.label2.Text = "kategory pengeluaran";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(558, 271);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 19;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
             // 
             // Pengeluaran
             // 
@@ -208,5 +221,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

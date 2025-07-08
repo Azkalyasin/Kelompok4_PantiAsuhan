@@ -26,9 +26,40 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesAdopsi();
             comboStatus.Items.AddRange(new string[] { "Proses", "Selesai", "Dibatalkan" });
+
+            dateTime.MinDate = DateTime.Today.AddDays(-7);
+            dateTime.MaxDate = DateTime.Today;
+            LoadComboBoxes();
             LoadData();
             dataGridViewAsuh.CellClick += DataGridViewAdopsi_CellClick;
         }
+
+        private void LoadComboBoxes()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                // Isi nama anak
+                SqlCommand cmdAnak = new SqlCommand("SELECT nama FROM Anak_Asuh", con);
+                SqlDataReader rdAnak = cmdAnak.ExecuteReader();
+                while (rdAnak.Read())
+                {
+                    comboNamaAnak.Items.Add(rdAnak.GetString(0));
+                }
+                rdAnak.Close();
+
+                // Isi nama orang tua
+                SqlCommand cmdOrtu = new SqlCommand("SELECT nama FROM Orang_Tua_Asuh", con);
+                SqlDataReader rdOrtu = cmdOrtu.ExecuteReader();
+                while (rdOrtu.Read())
+                {
+                    comboNamaOrangtua.Items.Add(rdOrtu.GetString(0));
+                }
+                rdOrtu.Close();
+            }
+        }
+
 
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -68,9 +99,9 @@ namespace ucpPabd
 
         private void ClearForm()
         {
-            txtNamaAnak.Clear();
-            txtNamaOrangtua.Clear();
-            dateTime.Value = DateTime.Now;
+            comboNamaAnak.SelectedIndex = -1;
+            comboNamaOrangtua.SelectedIndex = -1;
+            dateTime.Value = DateTime.Today;
             comboStatus.SelectedIndex = -1;
         }
 
@@ -99,12 +130,12 @@ namespace ucpPabd
                     SqlCommand cmdAnak = new SqlCommand("SELECT nama FROM Anak_Asuh WHERE anak_id = @id", con);
                     cmdAnak.Parameters.AddWithValue("@id", anakId);
                     object namaAnakObj = cmdAnak.ExecuteScalar();
-                    txtNamaAnak.Text = namaAnakObj != null ? namaAnakObj.ToString() : "";
+                    comboNamaAnak.Text = namaAnakObj != null ? namaAnakObj.ToString() : "";
 
                     SqlCommand cmdOrtu = new SqlCommand("SELECT nama FROM Orang_Tua_Asuh WHERE orang_tua_id = @id", con);
                     cmdOrtu.Parameters.AddWithValue("@id", ortuId);
                     object namaOrtuObj = cmdOrtu.ExecuteScalar();
-                    txtNamaOrangtua.Text = namaOrtuObj != null ? namaOrtuObj.ToString() : "";
+                    comboNamaOrangtua.Text = namaOrtuObj != null ? namaOrtuObj.ToString() : "";
                 }
 
                 if (row.Cells["tanggal_adopsi"].Value != DBNull.Value)
@@ -125,95 +156,84 @@ namespace ucpPabd
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
                 SqlTransaction transaction = con.BeginTransaction();
 
-                // Validasi input awal
-                if (string.IsNullOrWhiteSpace(txtNamaAnak.Text) ||
-                    string.IsNullOrWhiteSpace(txtNamaOrangtua.Text) ||
-                    string.IsNullOrWhiteSpace(comboStatus.Text))
-                {
-                    MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                if (!System.Text.RegularExpressions.Regex.IsMatch(txtNamaAnak.Text, @"^[a-zA-Z\s]+$"))
-                {
-                    MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                if (!System.Text.RegularExpressions.Regex.IsMatch(txtNamaOrangtua.Text, @"^[a-zA-Z\s]+$"))
-                {
-                    MessageBox.Show("Nama orang tua tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-
-                // Cari anak_id berdasarkan nama anak
-                string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
-                SqlCommand cmdAnak = new SqlCommand(queryAnak, con, transaction);
-                cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
-                object resultAnak = cmdAnak.ExecuteScalar();
-
-                if (resultAnak == null)
-                {
-                    transaction.Rollback();
-                    MessageBox.Show("Nama anak tidak ditemukan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Cari orang_tua_id berdasarkan nama orang tua
-                string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
-                SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con, transaction);
-                cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
-                object resultOrtu = cmdOrtu.ExecuteScalar();
-
-                if (resultOrtu == null)
-                {
-                    transaction.Rollback();
-                    MessageBox.Show("Nama orang tua tidak ditemukan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Validasi tanggal tidak boleh di masa depan
-                if (dateTime.Value.Date > DateTime.Today)
-                {
-                    MessageBox.Show("Tanggal adopsi tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Konfirmasi sebelum insert
-                var konfirmasi = MessageBox.Show(
-                    $"Apakah Anda yakin ingin menambahkan data adopsi berikut?\n\n" +
-                    $"Nama Anak: {txtNamaAnak.Text}\n" +
-                    $"Nama Orang Tua: {txtNamaOrangtua.Text}\n" +
-                    $"Tanggal Adopsi: {dateTime.Value.ToString("dd MMMM yyyy")}\n" +
-                    $"Status Adopsi: {comboStatus.Text}",
-                    "Konfirmasi Tambah Data Adopsi",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (konfirmasi == DialogResult.No)
-                {
-                    return;
-                }
-
-                SqlCommand cmd = new SqlCommand("sp_TambahAdopsi", con, transaction);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
-                cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
-                cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
-                cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
-
                 try
                 {
+                    // Validasi input awal
+                    if (string.IsNullOrWhiteSpace(comboNamaAnak.Text) ||
+                        string.IsNullOrWhiteSpace(comboNamaOrangtua.Text) ||
+                        string.IsNullOrWhiteSpace(comboStatus.Text))
+                    {
+                        MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(comboNamaAnak.Text, @"^[a-zA-Z\s]+$"))
+                    {
+                        MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(comboNamaOrangtua.Text, @"^[a-zA-Z\s]+$"))
+                    {
+                        MessageBox.Show("Nama orang tua tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (dateTime.Value < DateTime.Today.AddDays(-7) || dateTime.Value > DateTime.Today)
+                    {
+                        MessageBox.Show("Tanggal adopsi hanya boleh antara 1 minggu yang lalu hingga 1 minggu ke depan.");
+                        return;
+                    }
+
+                    // Ambil anak_id
+                    string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
+                    SqlCommand cmdAnak = new SqlCommand(queryAnak, con, transaction);
+                    cmdAnak.Parameters.AddWithValue("@namaAnak", comboNamaAnak.Text);
+                    object resultAnak = cmdAnak.ExecuteScalar();
+
+                    if (resultAnak == null)
+                        throw new Exception("Nama anak tidak ditemukan.");
+
+                    // Ambil orang_tua_id
+                    string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
+                    SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con, transaction);
+                    cmdOrtu.Parameters.AddWithValue("@namaOrangtua", comboNamaOrangtua.Text);
+                    object resultOrtu = cmdOrtu.ExecuteScalar();
+
+                    if (resultOrtu == null)
+                        throw new Exception("Nama orang tua tidak ditemukan.");
+
+                    // Konfirmasi user
+                    var konfirmasi = MessageBox.Show(
+                        $"Apakah Anda yakin ingin menambahkan data adopsi berikut?\n\n" +
+                        $"Nama Anak: {comboNamaAnak.Text}\n" +
+                        $"Nama Orang Tua: {comboNamaOrangtua.Text}\n" +
+                        $"Tanggal Adopsi: {dateTime.Value:dd MMMM yyyy}\n" +
+                        $"Status Adopsi: {comboStatus.Text}",
+                        "Konfirmasi Tambah Data Adopsi",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
+                    if (konfirmasi == DialogResult.No)
+                        return;
+
+                    // Eksekusi stored procedure
+                    SqlCommand cmd = new SqlCommand("sp_TambahAdopsi", con, transaction);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@anak_id", (int)resultAnak);
+                    cmd.Parameters.AddWithValue("@orang_tua_id", (int)resultOrtu);
+                    cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
+                    cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
+
                     cmd.ExecuteNonQuery();
                     transaction.Commit();
+
                     MessageBox.Show("Data adopsi berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     _cache.Remove(_cacheKey);
                     ClearForm();
@@ -221,7 +241,7 @@ namespace ucpPabd
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    try { transaction.Rollback(); } catch { /* rollback gagal? abaikan */ }
                     MessageBox.Show("Gagal menambahkan data adopsi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -240,25 +260,37 @@ namespace ucpPabd
                     SqlTransaction transaction = con.BeginTransaction();
 
                     // Validasi input awal
-                    if (string.IsNullOrWhiteSpace(txtNamaAnak.Text) ||
-                        string.IsNullOrWhiteSpace(txtNamaOrangtua.Text) ||
+                    if (string.IsNullOrWhiteSpace(comboNamaAnak.Text) ||
+                        string.IsNullOrWhiteSpace(comboNamaOrangtua.Text) ||
                         string.IsNullOrWhiteSpace(comboStatus.Text))
                     {
                         MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    // Validasi tanggal tidak boleh di masa depan
-                    if (dateTime.Value.Date > DateTime.Today)
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(comboNamaAnak.Text, @"^[a-zA-Z\s]+$"))
                     {
-                        MessageBox.Show("Tanggal adopsi tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(comboNamaOrangtua.Text, @"^[a-zA-Z\s]+$"))
+                    {
+                        MessageBox.Show("Nama orang tua tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Validasi tanggal tidak boleh lebih dari 7 hari ke depan atau ke belakang
+                    if (dateTime.Value < DateTime.Today.AddDays(-7) || dateTime.Value > DateTime.Today)
+                    {
+                        MessageBox.Show("Tanggal adopsi hanya boleh antara 1 minggu yang lalu hingga 1 minggu ke depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
                     // Ambil ID anak berdasarkan nama
                     string queryAnak = "SELECT anak_id FROM Anak_Asuh WHERE nama = @namaAnak";
                     SqlCommand cmdAnak = new SqlCommand(queryAnak, con, transaction);
-                    cmdAnak.Parameters.AddWithValue("@namaAnak", txtNamaAnak.Text);
+                    cmdAnak.Parameters.AddWithValue("@namaAnak", comboNamaAnak.Text);
                     object resultAnak = cmdAnak.ExecuteScalar();
 
                     if (resultAnak == null)
@@ -271,21 +303,21 @@ namespace ucpPabd
                     // Ambil ID orang tua berdasarkan nama
                     string queryOrtu = "SELECT orang_tua_id FROM Orang_Tua_Asuh WHERE nama = @namaOrangtua";
                     SqlCommand cmdOrtu = new SqlCommand(queryOrtu, con, transaction);
-                    cmdOrtu.Parameters.AddWithValue("@namaOrangtua", txtNamaOrangtua.Text);
+                    cmdOrtu.Parameters.AddWithValue("@namaOrangtua", comboNamaOrangtua.Text);
                     object resultOrtu = cmdOrtu.ExecuteScalar();
 
                     if (resultOrtu == null)
                     {
                         transaction.Rollback();
-                        MessageBox.Show("Nama Orangtua tidak ditemukan.");
+                        MessageBox.Show("Nama orang tua tidak ditemukan.");
                         return;
                     }
 
                     // Konfirmasi sebelum update
                     var konfirmasi = MessageBox.Show(
                         $"Apakah Anda yakin ingin memperbarui data adopsi ini?\n\n" +
-                        $"Nama Anak: {txtNamaAnak.Text}\n" +
-                        $"Nama Orang Tua: {txtNamaOrangtua.Text}\n" +
+                        $"Nama Anak: {comboNamaAnak.Text}\n" +
+                        $"Nama Orang Tua: {comboNamaOrangtua.Text}\n" +
                         $"Tanggal Adopsi: {dateTime.Value:dd MMMM yyyy}\n" +
                         $"Status Adopsi: {comboStatus.Text}",
                         "Konfirmasi Update Data Adopsi",
@@ -306,7 +338,6 @@ namespace ucpPabd
                     cmd.Parameters.AddWithValue("@tanggal_adopsi", dateTime.Value);
                     cmd.Parameters.AddWithValue("@status_adopsi", comboStatus.Text);
 
-
                     try
                     {
                         cmd.ExecuteNonQuery();
@@ -323,7 +354,6 @@ namespace ucpPabd
                     }
                 }
             }
-
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -395,6 +425,11 @@ namespace ucpPabd
         private void txtAnakid_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnKembali_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -46,6 +46,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridViewOrtu = new System.Windows.Forms.DataGridView();
+            this.btnKembali = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrtu)).BeginInit();
@@ -61,6 +62,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnKembali);
             this.groupBox1.Controls.Add(this.comboStatus);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label1);
@@ -226,6 +228,16 @@
             this.dataGridViewOrtu.Size = new System.Drawing.Size(864, 215);
             this.dataGridViewOrtu.TabIndex = 4;
             // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(570, 299);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 18;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // Ortu_Asuh
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -266,5 +278,6 @@
         private System.Windows.Forms.ComboBox comboStatus;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

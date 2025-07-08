@@ -28,6 +28,8 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesPemasukan();
             comboPemasukan.Items.AddRange(new string[] { "Donasi", "Bantuan Pemerintah", "Sponsor", "Lainnya" });
+            dateTime.MinDate = DateTime.Today.AddDays(-7);
+            dateTime.MaxDate = DateTime.Today;
             LoadData();
             dataGridViewPemasukan.CellClick += DataGridViewPemasukan_CellClick;
         }
@@ -73,7 +75,14 @@ namespace ucpPabd
 
                 if (row.Cells["tanggal"].Value != DBNull.Value)
                 {
-                    dateTime.Value = Convert.ToDateTime(row.Cells["tanggal"].Value);
+                    DateTime tanggalDariDatabase = Convert.ToDateTime(row.Cells["tanggal"].Value);
+
+                    if (tanggalDariDatabase < dateTime.MinDate)
+                        dateTime.Value = dateTime.MinDate;
+                    else if (tanggalDariDatabase > dateTime.MaxDate)
+                        dateTime.Value = dateTime.MaxDate;
+                    else
+                        dateTime.Value = tanggalDariDatabase;
                 }
             }
         }
@@ -82,7 +91,7 @@ namespace ucpPabd
         private void ClearForm()
         {
             txtJumlah.Clear();
-            dateTime.Value = DateTime.Now;
+            dateTime.Value = DateTime.Today;
             comboPemasukan.SelectedIndex = -1;
         }
 
@@ -103,11 +112,12 @@ namespace ucpPabd
 
             DateTime tanggal = dateTime.Value;
 
-            if (tanggal > DateTime.Now)
+            if (tanggal < DateTime.Today.AddDays(-7) || tanggal > DateTime.Today)
             {
-                MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Tanggal hanya boleh dari 1 minggu yang lalu hingga hari ini.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
 
             string kategori = comboPemasukan.Text;
 
@@ -173,9 +183,9 @@ namespace ucpPabd
 
                 DateTime tanggal = dateTime.Value;
 
-                if (tanggal > DateTime.Now)
+                if (tanggal < DateTime.Today.AddDays(-7) || tanggal > DateTime.Today)
                 {
-                    MessageBox.Show("Tanggal pemasukan tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Tanggal hanya boleh dari 1 minggu yang lalu hingga hari ini.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -275,5 +285,14 @@ namespace ucpPabd
             }
         }
 
+        private void Pemasukan_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnKembali_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

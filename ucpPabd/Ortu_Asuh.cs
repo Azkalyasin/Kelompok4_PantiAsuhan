@@ -108,29 +108,32 @@ namespace ucpPabd
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
-    string.IsNullOrWhiteSpace(txtTelepon.Text) ||
-    string.IsNullOrWhiteSpace(txtAlamat.Text) ||
-    string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
-    string.IsNullOrWhiteSpace(comboStatus.Text))
+            string nama = txtNamaOrtu.Text.Trim();
+            string telepon = txtTelepon.Text.Trim();
+            string alamat = txtAlamat.Text.Trim();
+            string pekerjaan = comboPekerjaan.Text;
+            string status = comboStatus.Text;
+
+            if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(telepon) ||
+                string.IsNullOrWhiteSpace(alamat) || string.IsNullOrWhiteSpace(pekerjaan) || string.IsNullOrWhiteSpace(status))
             {
                 MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(txtNamaOrtu.Text, @"^[a-zA-Z\s]+$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
             {
-                MessageBox.Show("Nama anak tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             var konfirmasi = MessageBox.Show(
                 $"Apakah Anda yakin ingin menyimpan data berikut?\n\n" +
-                $"Nama: {txtNamaOrtu.Text}\n" +
-                $"Telepon: {txtTelepon.Text}\n" +
-                $"Alamat: {txtAlamat.Text}\n" +
-                $"Pekerjaan: {comboPekerjaan.Text}\n" +
-                $"Status: {comboStatus.Text}",
+                $"Nama: {nama}\n" +
+                $"Telepon: {telepon}\n" +
+                $"Alamat: {alamat}\n" +
+                $"Pekerjaan: {pekerjaan}\n" +
+                $"Status: {status}",
                 "Konfirmasi Simpan",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -145,19 +148,30 @@ namespace ucpPabd
             {
                 con.Open();
                 SqlTransaction transaction = con.BeginTransaction();
-                using (SqlCommand cmd = new SqlCommand("sp_TambahOrtu", con, transaction))
+                try
                 {
-                    try
+
+                    using (SqlCommand cek = new SqlCommand("SELECT COUNT(*) FROM Orang_Tua_Asuh WHERE telepon = @telepon", con, transaction))
+                    {
+                        cek.Parameters.AddWithValue("@telepon", telepon);
+                        int count = (int)cek.ExecuteScalar();
+                        if (count > 0)
+                        {
+                            MessageBox.Show("Nomor telepon ini sudah terdaftar.", "Telepon Duplikat", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            transaction.Rollback();
+                            return;
+                        }
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("sp_TambahOrtu", con, transaction))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        // Parameter sesuai stored procedure
-                        cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                        cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                        cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                        cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                        cmd.Parameters.AddWithValue("@status", comboStatus.Text);
-
+                        cmd.Parameters.AddWithValue("@nama", nama);
+                        cmd.Parameters.AddWithValue("@telepon", telepon);
+                        cmd.Parameters.AddWithValue("@alamat", alamat);
+                        cmd.Parameters.AddWithValue("@pekerjaan", pekerjaan);
+                        cmd.Parameters.AddWithValue("@status", status);
 
                         cmd.ExecuteNonQuery();
                         transaction.Commit();
@@ -165,13 +179,13 @@ namespace ucpPabd
                         MessageBox.Show("Data berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         cache.Remove(cacheKey);
                         ClearForm();
-                        LoadData(); // pastikan LoadData() sudah pakai procedure atau query yang tepat
+                        LoadData();
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -182,23 +196,35 @@ namespace ucpPabd
             {
                 int id = Convert.ToInt32(dataGridViewOrtu.CurrentRow.Cells["orang_tua_id"].Value);
 
-                if (string.IsNullOrWhiteSpace(txtNamaOrtu.Text) ||
-                    string.IsNullOrWhiteSpace(txtTelepon.Text) ||
-                    string.IsNullOrWhiteSpace(txtAlamat.Text) ||
-                    string.IsNullOrWhiteSpace(comboPekerjaan.Text) ||
-                    string.IsNullOrWhiteSpace(comboStatus.Text))
+                string nama = txtNamaOrtu.Text.Trim();
+                string telepon = txtTelepon.Text.Trim();
+                string alamat = txtAlamat.Text.Trim();
+                string pekerjaan = comboPekerjaan.Text;
+                string status = comboStatus.Text;
+
+                if (string.IsNullOrWhiteSpace(nama) ||
+                    string.IsNullOrWhiteSpace(telepon) ||
+                    string.IsNullOrWhiteSpace(alamat) ||
+                    string.IsNullOrWhiteSpace(pekerjaan) ||
+                    string.IsNullOrWhiteSpace(status))
                 {
                     MessageBox.Show("Semua field harus diisi.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
+                if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
+                {
+                    MessageBox.Show("Nama tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 var konfirmasi = MessageBox.Show(
                     $"Apakah Anda yakin ingin mengupdate data ini dengan informasi berikut?\n\n" +
-                    $"Nama: {txtNamaOrtu.Text}\n" +
-                    $"Telepon: {txtTelepon.Text}\n" +
-                    $"Alamat: {txtAlamat.Text}\n" +
-                    $"Pekerjaan: {comboPekerjaan.Text}\n" +
-                    $"Status: {comboStatus.Text}",
+                    $"Nama: {nama}\n" +
+                    $"Telepon: {telepon}\n" +
+                    $"Alamat: {alamat}\n" +
+                    $"Pekerjaan: {pekerjaan}\n" +
+                    $"Status: {status}",
                     "Konfirmasi Update",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question
@@ -216,16 +242,30 @@ namespace ucpPabd
                         con.Open();
                         SqlTransaction transaction = con.BeginTransaction();
 
+                 
+                        using (SqlCommand cek = new SqlCommand("SELECT COUNT(*) FROM Orang_Tua_Asuh WHERE telepon = @telepon AND orang_tua_id != @id", con, transaction))
+                        {
+                            cek.Parameters.AddWithValue("@telepon", telepon);
+                            cek.Parameters.AddWithValue("@id", id);
+                            int count = (int)cek.ExecuteScalar();
+                            if (count > 0)
+                            {
+                                MessageBox.Show("Nomor telepon ini sudah digunakan oleh entri lain.", "Telepon Duplikat", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                transaction.Rollback();
+                                return;
+                            }
+                        }
+
                         using (SqlCommand cmd = new SqlCommand("sp_UpdateOrtu", con, transaction))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
 
                             cmd.Parameters.AddWithValue("@orang_tua_id", id);
-                            cmd.Parameters.AddWithValue("@nama", txtNamaOrtu.Text);
-                            cmd.Parameters.AddWithValue("@telepon", txtTelepon.Text);
-                            cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text);
-                            cmd.Parameters.AddWithValue("@pekerjaan", comboPekerjaan.Text);
-                            cmd.Parameters.AddWithValue("@status", comboStatus.Text);
+                            cmd.Parameters.AddWithValue("@nama", nama);
+                            cmd.Parameters.AddWithValue("@telepon", telepon);
+                            cmd.Parameters.AddWithValue("@alamat", alamat);
+                            cmd.Parameters.AddWithValue("@pekerjaan", pekerjaan);
+                            cmd.Parameters.AddWithValue("@status", status);
 
                             cmd.ExecuteNonQuery();
                             transaction.Commit();
@@ -323,6 +363,10 @@ namespace ucpPabd
             }
         }
 
+        private void btnKembali_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
    

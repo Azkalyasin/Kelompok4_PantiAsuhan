@@ -30,6 +30,7 @@
         {
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnKembali = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // reportViewer1
@@ -54,11 +55,22 @@
             this.label1.TabIndex = 8;
             this.label1.Text = "Laporan Keuangan";
             // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(919, 12);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 20;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // ReportKeuangan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1038, 570);
+            this.Controls.Add(this.btnKembali);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.reportViewer1);
             this.Name = "ReportKeuangan";
@@ -73,5 +85,6 @@
 
         private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

@@ -29,6 +29,8 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesPengeluaran();
             comboPengeluaran.Items.AddRange(new string[] { "Makanan", "Pendidikan", "Kesehatan", "Operasional", "Lainnya" });
+            dateTime.MinDate = DateTime.Today.AddDays(-7); // 1 minggu lalu
+            dateTime.MaxDate = DateTime.Today;
             LoadData();
             dataGridViewPengeluaran.CellClick += DataGridViewPengeluaran_CellClick;
         }
@@ -94,7 +96,14 @@ namespace ucpPabd
 
                 if (row.Cells["tanggal"].Value != DBNull.Value)
                 {
-                    dateTime.Value = Convert.ToDateTime(row.Cells["tanggal"].Value);
+                    DateTime tanggal = Convert.ToDateTime(row.Cells["tanggal"].Value);
+
+                    if (tanggal < dateTime.MinDate)
+                        dateTime.Value = dateTime.MinDate;
+                    else if (tanggal > dateTime.MaxDate)
+                        dateTime.Value = dateTime.MaxDate;
+                    else
+                        dateTime.Value = tanggal;
                 }
             }
         }
@@ -132,11 +141,12 @@ namespace ucpPabd
             }
 
             DateTime tanggal = dateTime.Value;
-            if (tanggal.Date > DateTime.Today)
+            if (tanggal < DateTime.Today.AddDays(-7) || tanggal > DateTime.Today)
             {
-                MessageBox.Show("Tanggal pengeluaran tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Tanggal hanya boleh dari 1 minggu yang lalu hingga hari ini.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
 
             decimal saldoSaatIni = GetSaldoSaatIni();
             if (saldoSaatIni == 0)
@@ -213,11 +223,12 @@ namespace ucpPabd
                 }
 
                 DateTime tanggal = dateTime.Value;
-                if (tanggal.Date > DateTime.Today)
+                if (tanggal < DateTime.Today.AddDays(-7) || tanggal > DateTime.Today)
                 {
-                    MessageBox.Show("Tanggal tidak boleh di masa depan.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Tanggal hanya boleh dari 1 minggu yang lalu hingga hari ini.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 string kategori = comboPengeluaran.Text;
 
@@ -325,5 +336,14 @@ namespace ucpPabd
             }
         }
 
+        private void btnKembali_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -77,5 +77,10 @@ ORDER BY LaporanGabungan.saldo_id;";
             // Refresh the ReportViewer to show the updated report
             reportViewer1.RefreshReport();
         }
+
+        private void btnKembali_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

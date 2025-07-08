@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.dataGridViewSaldo = new System.Windows.Forms.DataGridView();
+            this.btnKembali = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSaldo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,11 +44,22 @@
             this.dataGridViewSaldo.TabIndex = 0;
             this.dataGridViewSaldo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewSaldo_CellContentClick_1);
             // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(681, 12);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 5;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // Saldo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnKembali);
             this.Controls.Add(this.dataGridViewSaldo);
             this.Name = "Saldo";
             this.Text = "Saldo";
@@ -59,5 +71,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridViewSaldo;
+        private System.Windows.Forms.Button btnKembali;
     }
 }

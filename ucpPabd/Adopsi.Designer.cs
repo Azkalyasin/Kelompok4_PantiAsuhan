@@ -37,12 +37,13 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnTambah = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtNamaOrangtua = new System.Windows.Forms.TextBox();
-            this.txtNamaAnak = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.comboNamaAnak = new System.Windows.Forms.ComboBox();
+            this.comboNamaOrangtua = new System.Windows.Forms.ComboBox();
+            this.btnKembali = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAsuh)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -60,6 +61,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnKembali);
+            this.groupBox1.Controls.Add(this.comboNamaOrangtua);
+            this.groupBox1.Controls.Add(this.comboNamaAnak);
             this.groupBox1.Controls.Add(this.dateTime);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboStatus);
@@ -67,8 +71,6 @@
             this.groupBox1.Controls.Add(this.btnUpdate);
             this.groupBox1.Controls.Add(this.btnTambah);
             this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Controls.Add(this.txtNamaOrangtua);
-            this.groupBox1.Controls.Add(this.txtNamaAnak);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label3);
@@ -143,23 +145,6 @@
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
             // 
-            // txtNamaOrangtua
-            // 
-            this.txtNamaOrangtua.Location = new System.Drawing.Point(294, 70);
-            this.txtNamaOrangtua.Multiline = true;
-            this.txtNamaOrangtua.Name = "txtNamaOrangtua";
-            this.txtNamaOrangtua.Size = new System.Drawing.Size(180, 29);
-            this.txtNamaOrangtua.TabIndex = 7;
-            // 
-            // txtNamaAnak
-            // 
-            this.txtNamaAnak.Location = new System.Drawing.Point(294, 19);
-            this.txtNamaAnak.Multiline = true;
-            this.txtNamaAnak.Name = "txtNamaAnak";
-            this.txtNamaAnak.Size = new System.Drawing.Size(180, 29);
-            this.txtNamaAnak.TabIndex = 5;
-            this.txtNamaAnak.TextChanged += new System.EventHandler(this.txtAnakid_TextChanged);
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -196,6 +181,32 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Nama Anak";
             // 
+            // comboNamaAnak
+            // 
+            this.comboNamaAnak.FormattingEnabled = true;
+            this.comboNamaAnak.Location = new System.Drawing.Point(294, 22);
+            this.comboNamaAnak.Name = "comboNamaAnak";
+            this.comboNamaAnak.Size = new System.Drawing.Size(180, 24);
+            this.comboNamaAnak.TabIndex = 18;
+            // 
+            // comboNamaOrangtua
+            // 
+            this.comboNamaOrangtua.FormattingEnabled = true;
+            this.comboNamaOrangtua.Location = new System.Drawing.Point(294, 83);
+            this.comboNamaOrangtua.Name = "comboNamaOrangtua";
+            this.comboNamaOrangtua.Size = new System.Drawing.Size(180, 24);
+            this.comboNamaOrangtua.TabIndex = 19;
+            // 
+            // btnKembali
+            // 
+            this.btnKembali.Location = new System.Drawing.Point(579, 299);
+            this.btnKembali.Name = "btnKembali";
+            this.btnKembali.Size = new System.Drawing.Size(107, 39);
+            this.btnKembali.TabIndex = 20;
+            this.btnKembali.Text = "kembali";
+            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
+            // 
             // Adopsi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -222,12 +233,13 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnTambah;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox txtNamaOrangtua;
-        private System.Windows.Forms.TextBox txtNamaAnak;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DateTimePicker dateTime;
+        private System.Windows.Forms.ComboBox comboNamaOrangtua;
+        private System.Windows.Forms.ComboBox comboNamaAnak;
+        private System.Windows.Forms.Button btnKembali;
     }
 }
