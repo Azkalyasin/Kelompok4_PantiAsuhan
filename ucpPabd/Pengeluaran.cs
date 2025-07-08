@@ -29,7 +29,7 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesPengeluaran();
             comboPengeluaran.Items.AddRange(new string[] { "Makanan", "Pendidikan", "Kesehatan", "Operasional", "Lainnya" });
-            dateTime.MinDate = DateTime.Today.AddDays(-7); // 1 minggu lalu
+            dateTime.MinDate = DateTime.Today.AddDays(-100); // 1 minggu lalu
             dateTime.MaxDate = DateTime.Today;
             LoadData();
             dataGridViewPengeluaran.CellClick += DataGridViewPengeluaran_CellClick;
@@ -72,7 +72,7 @@ namespace ucpPabd
         private void ClearForm()
         {
             txtJumlah.Clear();
-            dateTime.Value = DateTime.Now;
+            dateTime.Value = DateTime.Today;
             comboPengeluaran.SelectedIndex = -1;
         }
 
@@ -147,7 +147,6 @@ namespace ucpPabd
                 return;
             }
 
-
             decimal saldoSaatIni = GetSaldoSaatIni();
             if (saldoSaatIni == 0)
             {
@@ -190,6 +189,7 @@ namespace ucpPabd
                     cmd.Parameters.AddWithValue("@tanggal", tanggal);
                     cmd.ExecuteNonQuery();
                     transaction.Commit();
+
                     ClearCache();
                     MessageBox.Show("Data pengeluaran berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
@@ -197,11 +197,20 @@ namespace ucpPabd
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
-                    MessageBox.Show("Gagal menambahkan data: " + ex.Message);
+                    // Cek apakah transaksi masih bisa di-rollback
+                    try
+                    {
+                        if (transaction.Connection != null)
+                            transaction.Rollback();
+                    }
+                    catch (Exception rollbackEx)
+                    {
+                        MessageBox.Show("Gagal melakukan rollback: " + rollbackEx.Message, "Rollback Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    MessageBox.Show("Gagal menambahkan data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)

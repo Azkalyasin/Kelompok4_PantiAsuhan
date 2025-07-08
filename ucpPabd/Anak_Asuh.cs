@@ -33,7 +33,7 @@ namespace ucpPabd
             dataGridViewAnak.CellClick += DataGridViewAnak_CellClick;
             comboStatusPendidkan.Items.AddRange(new string[] { "SD", "SMP", "SMA", "Kuliah" });
             dateTimeTanggalLahir.MaxDate = DateTime.Today;
-            dateTime.MinDate = DateTime.Today.AddDays(-7);
+            dateTime.MinDate = DateTime.Today.AddDays(-100);
             dateTime.MaxDate = DateTime.Today;
 
         }

@@ -26,8 +26,8 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesAdopsi();
             comboStatus.Items.AddRange(new string[] { "Proses", "Selesai", "Dibatalkan" });
-
-            dateTime.MinDate = DateTime.Today.AddDays(-7);
+            _cache.Remove(_cacheKey);
+            dateTime.MinDate = DateTime.Today.AddDays(-100);
             dateTime.MaxDate = DateTime.Today;
             LoadComboBoxes();
             LoadData();

@@ -28,7 +28,7 @@ namespace ucpPabd
             InitializeComponent();
             EnsureIndexesPemasukan();
             comboPemasukan.Items.AddRange(new string[] { "Donasi", "Bantuan Pemerintah", "Sponsor", "Lainnya" });
-            dateTime.MinDate = DateTime.Today.AddDays(-7);
+            dateTime.MinDate = DateTime.Today.AddDays(-100);
             dateTime.MaxDate = DateTime.Today;
             LoadData();
             dataGridViewPemasukan.CellClick += DataGridViewPemasukan_CellClick;
