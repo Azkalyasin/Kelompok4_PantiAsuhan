@@ -127,11 +127,13 @@ namespace ucpPabd
                 return;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z\s]+$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z0-9\s.,-]+$"))
             {
-                MessageBox.Show("Alamat tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Alamat hanya boleh mengandung huruf, angka, spasi, koma, titik, atau strip.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(telepon, @"^\d{10,13}$"))
             {
@@ -231,11 +233,13 @@ namespace ucpPabd
                     return;
                 }
 
-                if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z\s]+$"))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(alamat, @"^[a-zA-Z0-9\s.,-]+$"))
                 {
-                    MessageBox.Show("Nama tidak boleh mengandung karakter spesial atau angka.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Alamat hanya boleh mengandung huruf, angka, spasi, koma, titik, atau strip.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
+
 
                 if (!System.Text.RegularExpressions.Regex.IsMatch(telepon, @"^\d{10,13}$"))
                 {
