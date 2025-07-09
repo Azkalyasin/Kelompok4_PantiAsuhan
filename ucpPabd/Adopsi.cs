@@ -21,10 +21,13 @@ namespace ucpPabd
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
         };
 
-        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
+
         public Adopsi()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             EnsureIndexesAdopsi();
             comboStatus.Items.AddRange(new string[] { "Proses", "Selesai", "Dibatalkan" });
             _cache.Remove(_cacheKey);

@@ -14,10 +14,12 @@ namespace ucpPabd
 {
     public partial class Saldo : Form
     {
-        string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
         public Saldo()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             this.Load += Saldo_Load;
         }
 

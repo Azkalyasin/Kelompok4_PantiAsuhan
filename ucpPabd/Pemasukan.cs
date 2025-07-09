@@ -22,10 +22,13 @@ namespace ucpPabd
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
         };
 
-        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
+
         public Pemasukan()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             EnsureIndexesPemasukan();
             comboPemasukan.Items.AddRange(new string[] { "Donasi", "Bantuan Pemerintah", "Sponsor", "Lainnya" });
             dateTime.MinDate = DateTime.Today.AddDays(-100);

@@ -23,10 +23,13 @@ namespace ucpPabd
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
         };
 
-        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
+
         public Pengeluaran()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             EnsureIndexesPengeluaran();
             comboPengeluaran.Items.AddRange(new string[] { "Makanan", "Pendidikan", "Kesehatan", "Operasional", "Lainnya" });
             dateTime.MinDate = DateTime.Today.AddDays(-100); // 1 minggu lalu

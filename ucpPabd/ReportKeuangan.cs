@@ -15,9 +15,12 @@ namespace ucpPabd
 {
     public partial class ReportKeuangan : Form
     {
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
         public ReportKeuangan()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
         }
 
         private void ReportKeuangan_Load(object sender, EventArgs e)
@@ -33,8 +36,6 @@ namespace ucpPabd
 
         private void SetupReportViewer()
         {
-            // Connection string to your database
-            string connectionString = @"Data Source=LAPTOP-PGU1KG1D\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True";
 
             // SQL query to retrieve the required data from the database
             string query = @"

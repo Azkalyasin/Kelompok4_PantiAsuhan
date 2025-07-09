@@ -22,10 +22,13 @@ namespace ucpPabd
             AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
         };
 
-        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
+
         public Ortu_Asuh()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             EnsureIndexesOrangTuaAsuh(); 
             LoadData();
             comboPekerjaan.Items.AddRange(new string[] { "PNS", "Jasa Profesional", "Wirausahawan", "TNI/Polri", "Pegawai Swasta" });

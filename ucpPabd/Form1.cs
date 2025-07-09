@@ -8,11 +8,12 @@ namespace ucpPabd
     public partial class Form1 : Form
     {
         // Connection string yang benar
-        static string connectionString = "Data Source=LAPTOP-PGU1KG1D\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
-
+        Koneksi kn = new Koneksi();
+        string connectionString = "";
         public Form1()
         {
             InitializeComponent();
+            connectionString = kn.connectionString();
             txtPassword.PasswordChar = '*';
         }
 
