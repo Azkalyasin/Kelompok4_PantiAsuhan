@@ -194,6 +194,18 @@ namespace ucpPabd
 
                 string kategori = comboPemasukan.Text;
 
+                var confirm = MessageBox.Show(
+    $"Apakah Anda yakin ingin menambahkan data pemasukan dengan keterangan :\n\nKategori: {kategori}\nJumlah: {jumlah}\nTanggal: {tanggal.ToShortDateString()}",
+    "Konfirmasi Tambah Data",
+    MessageBoxButtons.YesNo,
+    MessageBoxIcon.Question
+);
+
+                if (confirm == DialogResult.No)
+                {
+                    return;
+                }
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
