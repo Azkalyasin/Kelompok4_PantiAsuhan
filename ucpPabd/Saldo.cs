@@ -42,7 +42,12 @@ namespace ucpPabd
                         DataTable dt = new DataTable();
                         da.Fill(dt);
 
-                        dataGridViewSaldo.DataSource = dt;
+                        // 🔽 Urutkan berdasarkan tanggal_update DESC (terbaru di atas)
+                        DataView dv = dt.DefaultView;
+                        dv.Sort = "tanggal_update DESC";
+
+                        // Tampilkan ke DataGridView
+                        dataGridViewSaldo.DataSource = dv.ToTable();
 
                         FormatDataGridView();
                     }
@@ -52,6 +57,7 @@ namespace ucpPabd
             {
                 MessageBox.Show($"Gagal memuat data saldo:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
 
         private void FormatDataGridView()
