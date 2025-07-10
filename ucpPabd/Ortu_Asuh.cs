@@ -30,7 +30,8 @@ namespace ucpPabd
         {
             InitializeComponent();
             connectionString = kn.connectionString();
-            EnsureIndexesOrangTuaAsuh(); 
+            EnsureIndexesOrangTuaAsuh();
+            cache.Remove(cacheKey);
             LoadData();
             comboPekerjaan.Items.AddRange(new string[] { "PNS", "Jasa Profesional", "Wirausahawan", "TNI/Polri", "Pegawai Swasta" });
             comboStatus.Items.AddRange(new string[] { "Menunggu", "Disetujui", "Ditolak" });
