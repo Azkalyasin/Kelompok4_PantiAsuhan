@@ -40,23 +40,23 @@ ORDER BY saldo_id</CommandText>
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="DataSetKeuangan" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DataSetKeuangan" msprop:Generator_DataSetName="DataSetKeuangan">
+  <xs:element name="DataSetKeuangan" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DataSetKeuangan" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSetKeuangan">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableVarName="tableDataTable1" msprop:Generator_UserTableName="DataTable1">
+        <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_UserTableName="DataTable1" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_TableVarName="tableDataTable1">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Tanggal" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Tanggal" msprop:Generator_ColumnPropNameInTable="TanggalColumn" msprop:Generator_ColumnVarNameInTable="columnTanggal" msprop:Generator_UserColumnName="Tanggal" type="xs:dateTime" minOccurs="0" />
-              <xs:element name="Keterangan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Keterangan" msprop:Generator_ColumnPropNameInTable="KeteranganColumn" msprop:Generator_ColumnVarNameInTable="columnKeterangan" msprop:Generator_UserColumnName="Keterangan" minOccurs="0">
+              <xs:element name="Tanggal" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="TanggalColumn" msprop:Generator_ColumnPropNameInRow="Tanggal" msprop:Generator_UserColumnName="Tanggal" msprop:Generator_ColumnVarNameInTable="columnTanggal" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Keterangan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="KeteranganColumn" msprop:Generator_ColumnPropNameInRow="Keterangan" msprop:Generator_UserColumnName="Keterangan" msprop:Generator_ColumnVarNameInTable="columnKeterangan" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="25" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Pemasukan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Pemasukan" msprop:Generator_ColumnPropNameInTable="PemasukanColumn" msprop:Generator_ColumnVarNameInTable="columnPemasukan" msprop:Generator_UserColumnName="Pemasukan" type="xs:decimal" minOccurs="0" />
-              <xs:element name="Pengeluaran" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Pengeluaran" msprop:Generator_ColumnPropNameInTable="PengeluaranColumn" msprop:Generator_ColumnVarNameInTable="columnPengeluaran" msprop:Generator_UserColumnName="Pengeluaran" type="xs:decimal" minOccurs="0" />
-              <xs:element name="Saldo" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="Saldo" msprop:Generator_ColumnPropNameInTable="SaldoColumn" msprop:Generator_ColumnVarNameInTable="columnSaldo" msprop:Generator_UserColumnName="Saldo" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Pemasukan" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="PemasukanColumn" msprop:Generator_ColumnPropNameInRow="Pemasukan" msprop:Generator_UserColumnName="Pemasukan" msprop:Generator_ColumnVarNameInTable="columnPemasukan" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Pengeluaran" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="PengeluaranColumn" msprop:Generator_ColumnPropNameInRow="Pengeluaran" msprop:Generator_UserColumnName="Pengeluaran" msprop:Generator_ColumnVarNameInTable="columnPengeluaran" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Saldo" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="SaldoColumn" msprop:Generator_ColumnPropNameInRow="Saldo" msprop:Generator_UserColumnName="Saldo" msprop:Generator_ColumnVarNameInTable="columnSaldo" type="xs:decimal" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

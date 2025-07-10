@@ -39,21 +39,15 @@ namespace ucpPabd
 
             // SQL query to retrieve the required data from the database
             string query = @"
-        SELECT
-    LaporanGabungan.tanggal AS [Tanggal],
-    LaporanGabungan.kategori AS [Keterangan],
-    LaporanGabungan.Pemasukan,
-    LaporanGabungan.Pengeluaran,
-    LaporanGabungan.total_saldo AS [Saldo]
-FROM
-    (
-        SELECT s.saldo_id, p.tanggal, p.kategori, p.jumlah AS Pemasukan, 0 AS Pengeluaran, s.total_saldo
-        FROM Saldo s INNER JOIN Pemasukan p ON s.pemasukan_id = p.pemasukan_id
-        UNION ALL
-        SELECT s.saldo_id, e.tanggal, e.kategori, 0 AS Pemasukan, e.jumlah AS Pengeluaran, s.total_saldo
-        FROM Saldo s INNER JOIN Pengeluaran e ON s.pengeluaran_id = e.pengeluaran_id
-    ) AS LaporanGabungan
-ORDER BY LaporanGabungan.saldo_id;";
+        SELECT tanggal AS Tanggal, kategori AS Keterangan, Pemasukan, Pengeluaran, total_saldo AS Saldo
+        FROM     (SELECT s.saldo_id, p.tanggal, p.kategori, p.jumlah AS Pemasukan, 0 AS Pengeluaran, s.total_saldo
+                          FROM      Saldo AS s INNER JOIN
+                                            Pemasukan AS p ON s.pemasukan_id = p.pemasukan_id
+                          UNION ALL
+                          SELECT s.saldo_id, e.tanggal, e.kategori, 0 AS Pemasukan, e.jumlah AS Pengeluaran, s.total_saldo
+                          FROM     Saldo AS s INNER JOIN
+                                            Pengeluaran AS e ON s.pengeluaran_id = e.pengeluaran_id) AS LaporanGabungan
+        ORDER BY saldo_id";
 
             // Create a DataTable to store the data
             DataTable dt = new DataTable();
@@ -62,7 +56,8 @@ ORDER BY LaporanGabungan.saldo_id;";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                da.Fill(dt);
+
+                da.Fill(dt); // <--- Tambahkan Breakpoint di sini
             }
 
             // Create a ReportDataSource
