@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.Caching;
 
 
 namespace ucpPabd
@@ -48,6 +49,9 @@ namespace ucpPabd
 
         private void LoadData()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             try
             {
                 DataTable dt;
@@ -70,22 +74,25 @@ namespace ucpPabd
                             da.Fill(dt);
 
                             // Simpan ke cache selama 5 menit
-                            CacheItemPolicy policy = new CacheItemPolicy
-                            {
-                                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
-                            };
-                            cache.Set(cacheKey, dt, policy);
+                            cache.Set(cacheKey, dt, _cachePolicy);
                         }
                     }
                 }
 
                 dataGridViewOrtu.DataSource = dt;
+
+                stopwatch.Stop();
+                double elapsed = stopwatch.Elapsed.TotalSeconds;
+
+                MessageBox.Show($"Waktu load data: {elapsed:F2} detik", "Waktu Respons", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal memuat data: " + ex.Message);
+                stopwatch.Stop();
+                MessageBox.Show("Gagal memuat data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void ClearForm()
         {
