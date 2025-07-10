@@ -17,7 +17,7 @@ namespace ucpPabd
             {
                 string localIP = GetLocalIPAddress(); 
                 string connStr = ""; 
-                connStr = $"Server={localIP}\\AZKALADZKIA;Initial Catalog=panti_asuhan;Integrated Security=True;";
+                connStr = $"Server={localIP};Initial Catalog=panti_asuhan;Integrated Security=True;";
                 return connStr;
             }
             catch (Exception ex)
